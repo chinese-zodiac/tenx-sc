@@ -4,7 +4,11 @@ Allows launching tokens with free czusd liquidity up to $10k.
 
 ## Official Deployments
 
+TenXLaunch
 BSC:0x9A62fE6B016f8ba28b64D822D4fB6E5206268C22
+
+TenXLaunchView
+BSC:0xFaCC24759420c63DdD39650268cAc0AA582eb682
 
 ## deployment
 
