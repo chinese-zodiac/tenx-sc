@@ -7,7 +7,16 @@ import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20P
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 import "./interfaces/IAmmFactory.sol";
-
+/*
+    TODO:
+    add events
+    add link to token logo
+    add max tx
+    add max supply
+    add auto lp on buy/sell
+    add social links array (tg, x, web)
+    add short description
+    */
 contract TenXToken is ERC20, ERC20Permit, ERC20Burnable {
     uint256 constant _BASIS = 10000;
 
