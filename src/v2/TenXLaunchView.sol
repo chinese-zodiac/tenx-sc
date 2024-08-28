@@ -4,17 +4,17 @@ pragma solidity ^0.8.23;
 
 import "./TenXLaunch.sol";
 import "./TenXToken.sol";
-import "./interfaces/IAmmPair.sol";
+import "../interfaces/IAmmPair.sol";
 
-contract TenXLaunchView {
-    TenXLaunch public immutable tenXLaunch;
+contract TenXLaunchViewV2 {
+    TenXLaunchV2 public immutable tenXLaunch;
 
-    constructor(TenXLaunch _tenXLaunch) {
+    constructor(TenXLaunchV2 _tenXLaunch) {
         tenXLaunch = _tenXLaunch;
     }
 
     function getTenXTokenData(
-        TenXToken _token
+        TenXTokenV2 _token
     )
         public
         view
@@ -28,11 +28,9 @@ contract TenXLaunchView {
             uint16 sellBurn_
         )
     {
-        czusdPair_ = IAmmPair(
-            tenXLaunch.launchedTokenCzusdPair(address(_token))
-        );
+        czusdPair_ = IAmmPair(_token.ammCzusdPair());
         taxReceiver_ = _token.taxReceiver();
-        czusdGrant_ = tenXLaunch.launchedTokenLiquidityUsd(address(_token));
+        czusdGrant_ = tenXLaunch.czusdGrant(address(_token));
         buyTax_ = uint16(_token.buyTax());
         buyBurn_ = uint16(_token.buyBurn());
         sellTax_ = uint16(_token.sellTax());
@@ -45,7 +43,7 @@ contract TenXLaunchView {
         public
         view
         returns (
-            TenXToken token_,
+            TenXTokenV2 token_,
             IAmmPair czusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -55,7 +53,7 @@ contract TenXLaunchView {
             uint16 sellBurn_
         )
     {
-        token_ = TenXToken(tenXLaunch.launchedTokenAt(_index));
+        token_ = TenXTokenV2(tenXLaunch.launchedTokenAt(_index));
         (
             czusdPair_,
             taxReceiver_,
@@ -74,7 +72,7 @@ contract TenXLaunchView {
         public
         view
         returns (
-            TenXToken[] memory tokens_,
+            TenXTokenV2[] memory tokens_,
             IAmmPair[] memory czusdPairs_,
             address[] memory taxReceivers_,
             uint256[] memory czusdGrants_,
@@ -102,7 +100,7 @@ contract TenXLaunchView {
             //count exceeds max, only get tokens up to max
             count = tokenCount - startIndex;
         }
-        tokens_ = new TenXToken[](count);
+        tokens_ = new TenXTokenV2[](count);
         czusdPairs_ = new IAmmPair[](count);
         taxReceivers_ = new address[](count);
         czusdGrants_ = new uint256[](count);
@@ -111,7 +109,7 @@ contract TenXLaunchView {
         sellTaxes_ = new uint16[](count);
         sellBurns_ = new uint16[](count);
         for (uint256 i = startIndex; i < count; i++) {
-            TenXToken token = TenXToken(tenXLaunch.launchedTokenAt(i));
+            TenXTokenV2 token = TenXTokenV2(tenXLaunch.launchedTokenAt(i));
             tokens_[i] = token;
             czusdPairs_[i] = IAmmPair(
                 tenXLaunch.launchedTokenCzusdPair(address(token))

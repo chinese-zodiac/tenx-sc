@@ -3,11 +3,11 @@
 pragma solidity ^0.8.23;
 
 import "./TenXToken.sol";
-import "./interfaces/IAmmFactory.sol";
-import "./interfaces/IAmmRouter02.sol";
-import "./interfaces/IERC20Mintable.sol";
+import "../interfaces/IAmmFactory.sol";
+import "../interfaces/IAmmRouter02.sol";
+import "../interfaces/IERC20Mintable.sol";
 
-import {IterableArrayWithoutDuplicateKeys} from "./lib/IterableArrayWithoutDuplicateKeys.sol";
+import {IterableArrayWithoutDuplicateKeys} from "../lib/IterableArrayWithoutDuplicateKeys.sol";
 
 contract TenXLaunch {
     using IterableArrayWithoutDuplicateKeys for IterableArrayWithoutDuplicateKeys.Map;
