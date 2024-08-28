@@ -2,15 +2,15 @@
 // Authored by Plastic Digits
 pragma solidity ^0.8.23;
 
-import "./TenXLaunch.sol";
-import "./TenXToken.sol";
-import "../interfaces/IAmmPair.sol";
+import {TenXLaunchV2} from "./TenXLaunch.sol";
+import {TenXTokenV2} from "./TenXToken.sol";
+import {IAmmPair} from "../interfaces/IAmmPair.sol";
 
 contract TenXLaunchViewV2 {
-    TenXLaunchV2 public immutable tenXLaunch;
+    TenXLaunchV2 public immutable TEN_X_LAUNCH;
 
     constructor(TenXLaunchV2 _tenXLaunch) {
-        tenXLaunch = _tenXLaunch;
+        TEN_X_LAUNCH = _tenXLaunch;
     }
 
     function getTenXTokenData(
@@ -19,22 +19,36 @@ contract TenXLaunchViewV2 {
         public
         view
         returns (
-            IAmmPair czusdPair_,
+            string memory tokenLogoCID_,
+            string memory descriptionMarkdownCID_,
+            IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
             uint16 buyTax_,
             uint16 buyBurn_,
+            uint16 buyLpFee_,
             uint16 sellTax_,
-            uint16 sellBurn_
+            uint16 sellBurn_,
+            uint16 sellLpFee_,
+            uint16 balanceMax_,
+            uint16 transactionSizeMax_,
+            uint64 launchTimestamp_
         )
     {
-        czusdPair_ = IAmmPair(_token.ammCzusdPair());
+        tokenLogoCID_ = _token.tokenLogoCID();
+        descriptionMarkdownCID_ = _token.descriptionMarkdownCID();
+        ammCzusdPair_ = IAmmPair(_token.ammCzusdPair());
         taxReceiver_ = _token.taxReceiver();
-        czusdGrant_ = tenXLaunch.czusdGrant(address(_token));
-        buyTax_ = uint16(_token.buyTax());
-        buyBurn_ = uint16(_token.buyBurn());
-        sellTax_ = uint16(_token.sellTax());
-        sellBurn_ = uint16(_token.sellBurn());
+        czusdGrant_ = TEN_X_LAUNCH.czusdGrant(address(_token));
+        buyTax_ = _token.buyTax();
+        buyBurn_ = _token.buyBurn();
+        buyLpFee_ = _token.buyLpFee();
+        sellTax_ = _token.sellTax();
+        sellBurn_ = _token.sellBurn();
+        sellLpFee_ = _token.sellLpFee();
+        balanceMax_ = _token.balanceMax();
+        transactionSizeMax_ = _token.transactionSizeMax();
+        launchTimestamp_ = _token.launchTimestamp();
     }
 
     function getTenXTokenDataFromIndex(
@@ -44,84 +58,38 @@ contract TenXLaunchViewV2 {
         view
         returns (
             TenXTokenV2 token_,
-            IAmmPair czusdPair_,
+            string memory tokenLogoCID_,
+            string memory descriptionMarkdownCID_,
+            IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
             uint16 buyTax_,
             uint16 buyBurn_,
+            uint16 buyLpFee_,
             uint16 sellTax_,
-            uint16 sellBurn_
+            uint16 sellBurn_,
+            uint16 sellLpFee_,
+            uint16 balanceMax_,
+            uint16 transactionSizeMax_,
+            uint64 launchTimestamp_
         )
     {
-        token_ = TenXTokenV2(tenXLaunch.launchedTokenAt(_index));
+        token_ = TenXTokenV2(TEN_X_LAUNCH.launchedTokenAt(_index));
         (
-            czusdPair_,
+            tokenLogoCID_,
+            descriptionMarkdownCID_,
+            ammCzusdPair_,
             taxReceiver_,
             czusdGrant_,
             buyTax_,
             buyBurn_,
+            buyLpFee_,
             sellTax_,
-            sellBurn_
+            sellBurn_,
+            sellLpFee_,
+            balanceMax_,
+            transactionSizeMax_,
+            launchTimestamp_
         ) = getTenXTokenData(token_);
-    }
-
-    function getTenXTokenDataAll(
-        uint256 startIndex,
-        uint256 count
-    )
-        public
-        view
-        returns (
-            TenXTokenV2[] memory tokens_,
-            IAmmPair[] memory czusdPairs_,
-            address[] memory taxReceivers_,
-            uint256[] memory czusdGrants_,
-            uint16[] memory buyTaxes_,
-            uint16[] memory buyBurns_,
-            uint16[] memory sellTaxes_,
-            uint16[] memory sellBurns_
-        )
-    {
-        uint256 tokenCount = tenXLaunch.launchedTokensCount();
-        if (startIndex >= tokenCount) {
-            //start index too high, do nothing
-            return (
-                tokens_,
-                czusdPairs_,
-                taxReceivers_,
-                czusdGrants_,
-                buyTaxes_,
-                buyBurns_,
-                sellTaxes_,
-                sellBurns_
-            );
-        }
-        if (startIndex + count > tokenCount) {
-            //count exceeds max, only get tokens up to max
-            count = tokenCount - startIndex;
-        }
-        tokens_ = new TenXTokenV2[](count);
-        czusdPairs_ = new IAmmPair[](count);
-        taxReceivers_ = new address[](count);
-        czusdGrants_ = new uint256[](count);
-        buyTaxes_ = new uint16[](count);
-        buyBurns_ = new uint16[](count);
-        sellTaxes_ = new uint16[](count);
-        sellBurns_ = new uint16[](count);
-        for (uint256 i = startIndex; i < count; i++) {
-            TenXTokenV2 token = TenXTokenV2(tenXLaunch.launchedTokenAt(i));
-            tokens_[i] = token;
-            czusdPairs_[i] = IAmmPair(
-                tenXLaunch.launchedTokenCzusdPair(address(token))
-            );
-            taxReceivers_[i] = token.taxReceiver();
-            czusdGrants_[i] = tenXLaunch.launchedTokenLiquidityUsd(
-                address(token)
-            );
-            buyTaxes_[i] = (uint16(token.buyTax()));
-            buyBurns_[i] = (uint16(token.buyBurn()));
-            sellTaxes_[i] = (uint16(token.sellTax()));
-            sellBurns_[i] = (uint16(token.sellBurn()));
-        }
     }
 }

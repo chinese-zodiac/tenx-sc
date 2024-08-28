@@ -4,39 +4,46 @@ pragma solidity ^0.8.23;
 
 import {TenXSettingsV2} from "./TenXSettings.sol";
 import {TenXTokenV2} from "./TenXToken.sol";
-import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
 import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
 import {IERC20Mintable} from "../interfaces/IERC20Mintable.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 
 import {IterableArrayWithoutDuplicateKeys} from "../lib/IterableArrayWithoutDuplicateKeys.sol";
 
-contract TenXLaunchV2 {
+contract TenXLaunchV2 is AccessControlEnumerable {
     using IterableArrayWithoutDuplicateKeys for IterableArrayWithoutDuplicateKeys.Map;
 
     IterableArrayWithoutDuplicateKeys.Map private launchedTokens;
     mapping(address token => uint256 czusdWad) public czusdGrant;
 
-    TenXSettingsV2 public immutable tenXSettings;
+    TenXSettingsV2 public tenXSettings;
 
-    constructor() {
-        tenXSettings = new TenXSettingsV2();
-        tenXSettings.grantRole(tenXSettings.DEFAULT_ADMIN_ROLE(), msg.sender);
-        tenXSettings.revokeRole(
-            tenXSettings.DEFAULT_ADMIN_ROLE(),
-            address(this)
-        );
-    }
+    address public czodiacGovernance =
+        address(0x745A676C5c472b50B50e18D4b59e9AeEEc597046);
 
     event LaunchToken(TenXTokenV2 token, uint256 index, uint256 cuzsdGrant);
+
+    constructor(TenXSettingsV2 _tenXSettings) {
+        tenXSettings = _tenXSettings;
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
     function launchToken(
+        uint256 _czusdWad,
         string memory _name,
         string memory _symbol,
-        uint256 _czusdWad,
+        string memory _tokenLogoCID,
+        string memory _descriptionMarkdownCID,
         address _taxReceiver,
-        uint256 _buyTax,
-        uint256 _buyBurn,
-        uint256 _sellTax,
-        uint256 _sellBurn
+        uint16 _buyTax,
+        uint16 _buyBurn,
+        uint16 _buyLpFee,
+        uint16 _sellTax,
+        uint16 _sellBurn,
+        uint16 _sellLpFee,
+        uint16 _balanceMax,
+        uint16 _transactionSizeMax,
+        uint64 _launchTimestamp
     ) external {
         if (_czusdWad > tenXSettings.czusdGrantCap()) {
             revert TenXSettingsV2.OverCap(
@@ -52,18 +59,26 @@ contract TenXLaunchV2 {
         }
 
         TenXTokenV2 token = new TenXTokenV2(
-            _name,
-            _symbol,
-            _czusdWad, //supply equal to czusdWad, 1 token = $1
-            _taxReceiver,
-            _buyTax,
-            _buyBurn,
-            _sellTax,
-            _sellBurn
+            _name, //string memory _name,
+            _symbol, //string memory _symbol,
+            _tokenLogoCID, //string memory _tokenLogoCID,
+            _descriptionMarkdownCID, //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            _czusdWad, //uint256 _supply,  XYZ = 1 CZUSD
+            _taxReceiver, //address _taxReceiver,
+            _buyTax, //uint16 _buyTax,
+            _buyBurn, //uint16 _buyBurn,
+            _buyLpFee, //uint16 _buyLpFee,
+            _sellTax, //uint16 _sellTax,
+            _sellBurn, //uint16 _sellBurn,
+            _sellLpFee, //uint16 _sellLpFee,
+            _balanceMax, //uint16 _balanceMax,
+            _transactionSizeMax, //uint16 _transactionSizeMax,
+            _launchTimestamp //uint64 _launchTimestamp
         );
 
         IERC20Mintable czusd = tenXSettings.czusd();
-        IAmmRouter02 router = tenXSettings.router();
+        IAmmRouter02 router = tenXSettings.ammRouter();
         czusd.mint(address(this), _czusdWad);
 
         token.approve(address(router), _czusdWad);
@@ -84,6 +99,9 @@ contract TenXLaunchV2 {
         launchedTokens.add(address(token));
         czusdGrant[address(token)] = _czusdWad;
         emit LaunchToken(token, launchedTokens.size() - 1, _czusdWad);
+
+        token.grantRole(DEFAULT_ADMIN_ROLE, czodiacGovernance);
+        token.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
     }
 
     function launchedTokensCount() external view returns (uint256) {

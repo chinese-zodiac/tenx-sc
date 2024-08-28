@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.23;
 
-import "forge-std/Script.sol";
-import "../src/TenXLaunchView.sol";
+import {Script} from "forge-std/Script.sol";
+import {TenXLaunchView} from "../../src/v1/TenXLaunchView.sol";
+import {TenXLaunch} from "../../src/v1/TenXLaunch.sol";
 
 contract DeployTenXLaunchView is Script {
     function run() public {

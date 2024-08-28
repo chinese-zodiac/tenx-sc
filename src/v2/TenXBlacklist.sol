@@ -21,7 +21,7 @@ So please contact czodiac governance if you have evidence of something bad.
 Right now that would be t.me/czodiacofficial, if this is in the future and
 thats not active then post publicly in whatever czodaic chat is most active.
 */
-contract TenXBlacklist is AccessControlEnumerable {
+contract TenXBlacklistV2 is AccessControlEnumerable {
     using IterableArrayWithoutDuplicateKeys for IterableArrayWithoutDuplicateKeys.Map;
 
     bytes32 constant BLACKLISTER_ROLE = keccak256("BLACKLISTER_ROLE");
@@ -29,6 +29,9 @@ contract TenXBlacklist is AccessControlEnumerable {
     IterableArrayWithoutDuplicateKeys.Map private accountBlacklist;
 
     error Blacklisted(address account);
+
+    event BlacklistAdd(address account);
+    event BlacklistDel(address account);
 
     constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -45,6 +48,7 @@ contract TenXBlacklist is AccessControlEnumerable {
     ) external onlyRole(BLACKLISTER_ROLE) {
         for (uint256 i = 0; i < accounts.length; i++) {
             accountBlacklist.add(accounts[i]);
+            emit BlacklistAdd(accounts[i]);
         }
     }
 
@@ -53,6 +57,7 @@ contract TenXBlacklist is AccessControlEnumerable {
     ) external onlyRole(BLACKLISTER_ROLE) {
         for (uint256 i = 0; i < accounts.length; i++) {
             accountBlacklist.remove(accounts[i]);
+            emit BlacklistDel(accounts[i]);
         }
     }
 

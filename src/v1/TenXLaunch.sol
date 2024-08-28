@@ -2,10 +2,10 @@
 // Authored by Plastic Digits
 pragma solidity ^0.8.23;
 
-import "./TenXToken.sol";
-import "../interfaces/IAmmFactory.sol";
-import "../interfaces/IAmmRouter02.sol";
-import "../interfaces/IERC20Mintable.sol";
+import {TenXToken} from "./TenXToken.sol";
+import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
+import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
+import {IERC20Mintable} from "../interfaces/IERC20Mintable.sol";
 
 import {IterableArrayWithoutDuplicateKeys} from "../lib/IterableArrayWithoutDuplicateKeys.sol";
 

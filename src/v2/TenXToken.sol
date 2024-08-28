@@ -3,7 +3,7 @@
 pragma solidity ^0.8.23;
 
 import {TenXSettingsV2} from "./TenXSettings.sol";
-import {TenXBlacklist} from "./TenXBlacklist.sol";
+import {TenXBlacklistV2} from "./TenXBlacklist.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
@@ -11,7 +11,6 @@ import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC2
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 
 import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
-import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
 /*
     TODO:
     add events
@@ -29,16 +28,21 @@ contract TenXTokenV2 is
     AccessControlEnumerable
 {
     mapping(address account => bool isExempt) public isExempt;
+    //JPG, PNG, or SVG
     string public tokenLogoCID;
+    //Guide: https://commonmark.org/help/
+    //Upload to IPFS as .md file.
+    string public descriptionMarkdownCID;
 
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
+    TenXSettingsV2 public tenXSettings;
+
     address public ammCzusdPair;
     address public taxReceiver;
-    TenXSettingsV2 public tenXSettings;
-    TenXBlacklist public tenXBlacklist;
 
-    uint16 constant _BASIS = 10_000;
+    uint16 private constant _BASIS = 10_000;
+
     uint16 public buyTax;
     uint16 public buyBurn;
     uint16 public sellTax;
@@ -57,10 +61,8 @@ contract TenXTokenV2 is
         string memory _name,
         string memory _symbol,
         string memory _tokenLogoCID,
+        string memory _descriptionMarkdownCID,
         TenXSettingsV2 _tenXSettings,
-        TenXBlacklist _tenXBlacklist,
-        IAmmFactory _factory,
-        address _czusd,
         uint256 _supply,
         address _taxReceiver,
         uint16 _buyTax,
@@ -76,16 +78,19 @@ contract TenXTokenV2 is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         tenXSettings = _tenXSettings;
-        tenXBlacklist = _tenXBlacklist;
         taxReceiver = _taxReceiver;
         isExempt[taxReceiver] = true;
         isExempt[msg.sender] = true;
         isExempt[address(this)] = true;
 
-        ammCzusdPair = _factory.createPair(address(this), _czusd);
+        ammCzusdPair = tenXSettings.ammFactory().createPair(
+            address(this),
+            address(tenXSettings.czusd())
+        );
         _mint(msg.sender, _supply);
 
         tokenLogoCID = _tokenLogoCID;
+        descriptionMarkdownCID = _descriptionMarkdownCID;
 
         buyTax = _buyTax;
         buyBurn = _buyBurn;
@@ -100,7 +105,7 @@ contract TenXTokenV2 is
         _revertIfTaxTooHigh();
         _revertIfBalanceMaxOutOfRange();
         _revertIfTransactionSizeMaxOutOfRange();
-        tenXBlacklist.revertIfAccountBlacklisted(taxReceiver);
+        tenXSettings.blacklist().revertIfAccountBlacklisted(taxReceiver);
         uint64 maxLaunchTimestamp = uint64(block.timestamp) +
             tenXSettings.launchTimestampCap();
         if (launchTimestamp != 0 && launchTimestamp > maxLaunchTimestamp) {
@@ -108,18 +113,20 @@ contract TenXTokenV2 is
         }
     }
 
-    function ADMIN_setTenXProtocolAddresses(
-        TenXSettingsV2 _tenXSettings,
-        TenXBlacklist _tenXBlacklist
+    function ADMIN_setTenXSettings(
+        TenXSettingsV2 _tenXSettings
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         tenXSettings = _tenXSettings;
-        tenXBlacklist = _tenXBlacklist;
     }
 
     function ADMIN_setAmmCzusdPair(
         address _ammCzusdPair
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         ammCzusdPair = _ammCzusdPair;
+    }
+
+    function ADMIN_swapAndLiquify() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _swapAndLiquify();
     }
 
     function MANAGER_setTaxes(
@@ -139,10 +146,6 @@ contract TenXTokenV2 is
         _revertIfTaxTooHigh();
     }
 
-    function MANAGER_swapAndLiquify() external onlyRole(MANAGER_ROLE) {
-        _swapAndLiquify();
-    }
-
     function MANAGER_setMaxes(
         uint16 _balanceMax,
         uint16 _transactionSizeMax
@@ -158,7 +161,7 @@ contract TenXTokenV2 is
     ) external onlyRole(MANAGER_ROLE) {
         taxReceiver = _taxReceiver;
         isExempt[taxReceiver] = true;
-        tenXBlacklist.revertIfAccountBlacklisted(taxReceiver);
+        tenXSettings.blacklist().revertIfAccountBlacklisted(taxReceiver);
     }
 
     function MANAGER_setIsExempt(
@@ -168,10 +171,19 @@ contract TenXTokenV2 is
         isExempt[_account] = _isExempt;
     }
 
+    //JPG, PNG, SVG
     function MANAGER_setTokenLogoCID(
         string calldata _tokenLogoCID
     ) external onlyRole(MANAGER_ROLE) {
         tokenLogoCID = _tokenLogoCID;
+    }
+
+    //Guide: https://www.markdownguide.org/cheat-sheet/
+    //Upload to IPFS as .md file.
+    function MANAGER_setDescriptionMarkdownCID(
+        string calldata _descriptionMarkdownCID
+    ) external onlyRole(MANAGER_ROLE) {
+        descriptionMarkdownCID = _descriptionMarkdownCID;
     }
 
     function _revertIfTaxTooHigh() internal view {
@@ -226,9 +238,10 @@ contract TenXTokenV2 is
         address to,
         uint256 value
     ) internal override {
-        tenXBlacklist.revertIfAccountBlacklisted(address(this));
-        tenXBlacklist.revertIfAccountBlacklisted(from);
-        tenXBlacklist.revertIfAccountBlacklisted(to);
+        TenXBlacklistV2 blacklist = tenXSettings.blacklist();
+        blacklist.revertIfAccountBlacklisted(address(this));
+        blacklist.revertIfAccountBlacklisted(from);
+        blacklist.revertIfAccountBlacklisted(to);
         if (
             (from != ammCzusdPair && to != ammCzusdPair) || //not a buy or sell
             from == address(0) ||
@@ -247,7 +260,7 @@ contract TenXTokenV2 is
         _revertIfStandardWalletAndOverMaxHolding(to);
 
         //If theres enough tokens available, swap to LP
-        //Can also be done manually by manager
+        //Can also be done manually by admin
         if (
             balanceOf(address(this)) >=
             (tenXSettings.swapLiquifyAt() * totalSupply()) / _BASIS
@@ -310,7 +323,7 @@ contract TenXTokenV2 is
         uint256 bal = balanceOf(address(this));
 
         address czusd = address(tenXSettings.czusd());
-        IAmmRouter02 router = tenXSettings.router();
+        IAmmRouter02 router = tenXSettings.ammRouter();
 
         uint256 tokens = bal / 2;
         uint256 toSwap = bal - tokens;
