@@ -24,7 +24,7 @@ thats not active then post publicly in whatever czodaic chat is most active.
 contract TenXBlacklistV2 is AccessControlEnumerable {
     using IterableArrayWithoutDuplicateKeys for IterableArrayWithoutDuplicateKeys.Map;
 
-    bytes32 constant BLACKLISTER_ROLE = keccak256("BLACKLISTER_ROLE");
+    bytes32 public constant BLACKLISTER_ROLE = keccak256("BLACKLISTER_ROLE");
 
     IterableArrayWithoutDuplicateKeys.Map private accountBlacklist;
 

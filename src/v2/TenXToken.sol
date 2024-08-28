@@ -14,12 +14,6 @@ import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
 /*
     TODO:
     add events
-    add link to token logo
-    add max tx
-    add max supply
-    add auto lp on buy/sell
-    add social links array (tg, x, web)
-    add short description
     */
 contract TenXTokenV2 is
     ERC20,
