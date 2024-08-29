@@ -45,6 +45,7 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         uint16 _transactionSizeMax,
         uint64 _launchTimestamp
     ) external {
+        tenXSettings.blacklist().revertIfAccountBlacklisted(msg.sender);
         if (_czusdWad > tenXSettings.czusdGrantCap()) {
             revert TenXSettingsV2.OverCap(
                 _czusdWad,

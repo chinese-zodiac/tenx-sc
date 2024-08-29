@@ -11,10 +11,7 @@ import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC2
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 
 import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
-/*
-    TODO:
-    add events
-    */
+
 contract TenXTokenV2 is
     ERC20,
     ERC20Permit,
@@ -51,6 +48,24 @@ contract TenXTokenV2 is
     error OverMax(uint256 amount, uint256 max);
     error BeforeCountdown(uint64 currentTimestamp, uint64 countdownTimestamp);
 
+    event SetTaxes(
+        uint16 buyTax,
+        uint16 buyBurn,
+        uint16 buyLpFee,
+        uint16 sellTax,
+        uint16 sellBurn,
+        uint16 sellLpFee
+    );
+    event SetMaxes(uint16 balanceMax, uint16 transactionSizeMax);
+    event SetLaunchTimestamp(uint64 launchTimestamp);
+    event SetTaxReceiver(address taxReceiver);
+    event SetIsExempt(address account, bool isExempt);
+    event SetTokenLogoCID(string tokenLogoCID);
+    event SetDescriptionMarkdownCID(string descriptionMarkdownCID);
+    event TaxesCollected(uint256 taxWad, uint256 burnWad, uint256 lpWad);
+    event SetAmmCzusdPair(address ammCzusdPair);
+    event SetTenXSettings(TenXSettingsV2 tenXSettings);
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -76,6 +91,9 @@ contract TenXTokenV2 is
         isExempt[taxReceiver] = true;
         isExempt[msg.sender] = true;
         isExempt[address(this)] = true;
+        emit SetIsExempt(taxReceiver, true);
+        emit SetIsExempt(msg.sender, true);
+        emit SetIsExempt(address(this), true);
 
         ammCzusdPair = tenXSettings.ammFactory().createPair(
             address(this),
@@ -105,18 +123,28 @@ contract TenXTokenV2 is
         if (launchTimestamp != 0 && launchTimestamp > maxLaunchTimestamp) {
             revert TenXSettingsV2.OverCap(launchTimestamp, maxLaunchTimestamp);
         }
+
+        emit SetTaxes(buyTax, buyBurn, buyLpFee, sellTax, sellBurn, sellLpFee);
+        emit SetMaxes(balanceMax, transactionSizeMax);
+        emit SetLaunchTimestamp(launchTimestamp);
+        emit SetTokenLogoCID(tokenLogoCID);
+        emit SetDescriptionMarkdownCID(descriptionMarkdownCID);
+        emit SetAmmCzusdPair(ammCzusdPair);
+        emit SetTenXSettings(tenXSettings);
     }
 
     function ADMIN_setTenXSettings(
         TenXSettingsV2 _tenXSettings
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         tenXSettings = _tenXSettings;
+        emit SetTenXSettings(tenXSettings);
     }
 
     function ADMIN_setAmmCzusdPair(
         address _ammCzusdPair
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         ammCzusdPair = _ammCzusdPair;
+        emit SetAmmCzusdPair(ammCzusdPair);
     }
 
     function ADMIN_swapAndLiquify() external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -138,6 +166,7 @@ contract TenXTokenV2 is
         sellBurn = _sellBurn;
         sellLpFee = _sellLpFee;
         _revertIfTaxTooHigh();
+        emit SetTaxes(buyTax, buyBurn, buyLpFee, sellTax, sellBurn, sellLpFee);
     }
 
     function MANAGER_setMaxes(
@@ -148,6 +177,7 @@ contract TenXTokenV2 is
         transactionSizeMax = _transactionSizeMax;
         _revertIfBalanceMaxOutOfRange();
         _revertIfTransactionSizeMaxOutOfRange();
+        emit SetMaxes(balanceMax, transactionSizeMax);
     }
 
     function MANAGER_setTaxReceiver(
@@ -156,6 +186,7 @@ contract TenXTokenV2 is
         taxReceiver = _taxReceiver;
         isExempt[taxReceiver] = true;
         tenXSettings.blacklist().revertIfAccountBlacklisted(taxReceiver);
+        emit SetTaxReceiver(taxReceiver);
     }
 
     function MANAGER_setIsExempt(
@@ -163,6 +194,7 @@ contract TenXTokenV2 is
         bool _isExempt
     ) external onlyRole(MANAGER_ROLE) {
         isExempt[_account] = _isExempt;
+        emit SetIsExempt(_account, _isExempt);
     }
 
     //JPG, PNG, SVG
@@ -170,6 +202,7 @@ contract TenXTokenV2 is
         string calldata _tokenLogoCID
     ) external onlyRole(MANAGER_ROLE) {
         tokenLogoCID = _tokenLogoCID;
+        emit SetTokenLogoCID(tokenLogoCID);
     }
 
     //Guide: https://www.markdownguide.org/cheat-sheet/
@@ -178,6 +211,7 @@ contract TenXTokenV2 is
         string calldata _descriptionMarkdownCID
     ) external onlyRole(MANAGER_ROLE) {
         descriptionMarkdownCID = _descriptionMarkdownCID;
+        emit SetDescriptionMarkdownCID(descriptionMarkdownCID);
     }
 
     function _revertIfTaxTooHigh() internal view {
@@ -197,31 +231,43 @@ contract TenXTokenV2 is
     }
 
     function _revertIfBalanceMaxOutOfRange() internal view {
-        if (balanceMax > tenXSettings.balanceCap()) {
+        if (
+            balanceMax > (tenXSettings.balanceCapBps() * totalSupply()) / _BASIS
+        ) {
             revert TenXSettingsV2.OverCap(
                 balanceMax,
-                tenXSettings.balanceCap()
+                (tenXSettings.balanceCapBps() * totalSupply()) / _BASIS
             );
         }
-        if (balanceMax < tenXSettings.balanceFloor()) {
+        if (
+            balanceMax <
+            (tenXSettings.balanceFloorBps() * totalSupply()) / _BASIS
+        ) {
             revert TenXSettingsV2.UnderFloor(
                 balanceMax,
-                tenXSettings.balanceFloor()
+                (tenXSettings.balanceFloorBps() * totalSupply()) / _BASIS
             );
         }
     }
 
     function _revertIfTransactionSizeMaxOutOfRange() internal view {
-        if (transactionSizeMax > tenXSettings.transactionSizeCap()) {
+        if (
+            transactionSizeMax >
+            (tenXSettings.transactionSizeCapBps() * totalSupply()) / _BASIS
+        ) {
             revert TenXSettingsV2.OverCap(
                 transactionSizeMax,
-                tenXSettings.transactionSizeCap()
+                (tenXSettings.transactionSizeCapBps() * totalSupply()) / _BASIS
             );
         }
-        if (transactionSizeMax < tenXSettings.transactionSizeFloor()) {
+        if (
+            transactionSizeMax <
+            (tenXSettings.transactionSizeFloorBps() * totalSupply()) / _BASIS
+        ) {
             revert TenXSettingsV2.UnderFloor(
                 transactionSizeMax,
-                tenXSettings.transactionSizeFloor()
+                (tenXSettings.transactionSizeFloorBps() * totalSupply()) /
+                    _BASIS
             );
         }
     }
@@ -257,7 +303,7 @@ contract TenXTokenV2 is
         //Can also be done manually by admin
         if (
             balanceOf(address(this)) >=
-            (tenXSettings.swapLiquifyAt() * totalSupply()) / _BASIS
+            (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
         ) {
             _swapAndLiquify();
         }
@@ -296,7 +342,7 @@ contract TenXTokenV2 is
         if (taxWad > 0) super._update(from, taxReceiver, taxWad);
         if (burnWad > 0) super._update(from, address(0), burnWad);
         if (lpWad > 0) super._update(from, address(this), lpWad);
-
+        emit TaxesCollected(taxWad, burnWad, lpWad);
         super._update(from, to, value - taxWad - burnWad - lpWad);
     }
 
