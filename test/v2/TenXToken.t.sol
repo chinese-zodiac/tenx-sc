@@ -95,4 +95,420 @@ contract TestTenXTokenV2 is Test {
             token.ammCzusdPair()
         );
     }
+    function test_constructorReverts() public {
+        address taxReceiver = makeAddr("taxReceiver");
+        uint64 launchTimestamp = uint64(block.timestamp + 1 days);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                30_00,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            5_00, //uint16 _buyTax,
+            5_00, //uint16 _buyBurn,
+            5_00, //uint16 _buyLpFee,
+            5_00, //uint16 _sellTax,
+            5_00, //uint16 _sellBurn,
+            5_00, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                29_00,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            1_00, //uint16 _buyTax,
+            2_00, //uint16 _buyBurn,
+            3_00, //uint16 _buyLpFee,
+            5_00, //uint16 _sellTax,
+            7_00, //uint16 _sellBurn,
+            11_00, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                20_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            20_01, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                20_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            20_01, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                20_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            20_01, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                20_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            20_01, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                20_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            20_01, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                20_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            20_01, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                10_001 ether,
+                10_000 ether
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            10_001 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                10_001 ether,
+                10_000 ether
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            10_000 ether, //uint256 _balanceMax,
+            10_001 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.UnderFloor.selector,
+                0.99 ether,
+                1 ether
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            0.99 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.UnderFloor.selector,
+                0.99 ether,
+                1 ether
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            0.99 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        tenXBlacklist.grantRole(
+            tenXSettings.blacklist().BLACKLISTER_ROLE(),
+            address(this)
+        );
+        address[] memory addressList = new address[](1);
+        addressList[0] = taxReceiver;
+        tenXBlacklist.BLACKLISTER_addAccountBlacklist(addressList);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXBlacklistV2.Blacklisted.selector,
+                taxReceiver
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        tenXBlacklist.BLACKLISTER_delAccountBlacklist(addressList);
+        address blacklistedAccount = makeAddr("blacklistedAccount");
+        addressList[0] = blacklistedAccount;
+        tenXBlacklist.BLACKLISTER_addAccountBlacklist(addressList);
+        vm.startPrank(blacklistedAccount);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXBlacklistV2.Blacklisted.selector,
+                blacklistedAccount
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.stopPrank();
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXBlacklistV2.Blacklisted.selector,
+                blacklistedAccount
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            blacklistedAccount, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        uint64 badLaunchTimestamp = uint64(block.timestamp + 91 days);
+        uint64 maxLaunchTimestamp = uint64(block.timestamp + 90 days);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                badLaunchTimestamp,
+                maxLaunchTimestamp
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            badLaunchTimestamp //uint64 _launchTimestamp
+        );
+    }
 }

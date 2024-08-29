@@ -121,7 +121,7 @@ contract TenXTokenV2 is
         tenXSettings.blacklist().revertIfAccountBlacklisted(taxReceiver);
         uint64 maxLaunchTimestamp = uint64(block.timestamp) +
             tenXSettings.launchTimestampCap();
-        if (launchTimestamp != 0 && launchTimestamp > maxLaunchTimestamp) {
+        if (launchTimestamp > maxLaunchTimestamp) {
             revert TenXSettingsV2.OverCap(launchTimestamp, maxLaunchTimestamp);
         }
 
