@@ -70,6 +70,6 @@ contract TenXBlacklistV2 is AccessControlEnumerable {
     }
 
     function isAccountBlacklisted(address account) public view returns (bool) {
-        return accountBlacklist.getIndexOfKey(account) == -1;
+        return accountBlacklist.getIndexOfKey(account) != -1;
     }
 }

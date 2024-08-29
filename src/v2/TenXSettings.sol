@@ -21,12 +21,9 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     uint16 public swapLiquifyAtBps = 1; //0.01%
 
     TenXBlacklistV2 public blacklist;
-    IERC20Mintable public czusd =
-        IERC20Mintable(0xE68b79e51bf826534Ff37AA9CeE71a3842ee9c70);
-    IAmmRouter02 public ammRouter =
-        IAmmRouter02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
-    IAmmFactory public ammFactory =
-        IAmmFactory(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+    IERC20Mintable public czusd;
+    IAmmRouter02 public ammRouter;
+    IAmmFactory public ammFactory;
 
     event SetCzusdGrantCap(uint256 to);
     event SetCzusdGrantFlor(uint256 to);
@@ -45,7 +42,17 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     error OverCap(uint256 amount, uint256 cap);
     error UnderFloor(uint256 amount, uint256 floor);
 
-    constructor() {
+    constructor(
+        TenXBlacklistV2 _blacklist,
+        IERC20Mintable _czusd,
+        IAmmRouter02 _ammRouter,
+        IAmmFactory _ammFactory
+    ) {
+        blacklist = _blacklist;
+        czusd = _czusd;
+        ammRouter = _ammRouter;
+        ammFactory = _ammFactory;
+
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         emit SetCzusdGrantCap(czusdGrantCap);
         emit SetCzusdGrantFlor(czusdGrantFloor);

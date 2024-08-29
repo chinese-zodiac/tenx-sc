@@ -27,6 +27,9 @@ contract TenXTokenV2 is
 
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
+    uint256 public balanceMax;
+    uint256 public transactionSizeMax;
+
     TenXSettingsV2 public tenXSettings;
 
     address public ammCzusdPair;
@@ -40,8 +43,6 @@ contract TenXTokenV2 is
     uint16 public sellBurn;
     uint16 public buyLpFee;
     uint16 public sellLpFee;
-    uint16 public balanceMax;
-    uint16 public transactionSizeMax;
 
     uint64 public launchTimestamp;
 
@@ -56,7 +57,7 @@ contract TenXTokenV2 is
         uint16 sellBurn,
         uint16 sellLpFee
     );
-    event SetMaxes(uint16 balanceMax, uint16 transactionSizeMax);
+    event SetMaxes(uint256 balanceMax, uint256 transactionSizeMax);
     event SetLaunchTimestamp(uint64 launchTimestamp);
     event SetTaxReceiver(address taxReceiver);
     event SetIsExempt(address account, bool isExempt);
@@ -72,6 +73,8 @@ contract TenXTokenV2 is
         string memory _tokenLogoCID,
         string memory _descriptionMarkdownCID,
         TenXSettingsV2 _tenXSettings,
+        uint256 _balanceMax,
+        uint256 _transactionSizeMax,
         uint256 _supply,
         address _taxReceiver,
         uint16 _buyTax,
@@ -80,8 +83,6 @@ contract TenXTokenV2 is
         uint16 _sellTax,
         uint16 _sellBurn,
         uint16 _sellLpFee,
-        uint16 _balanceMax,
-        uint16 _transactionSizeMax,
         uint64 _launchTimestamp
     ) ERC20(_name, _symbol) ERC20Permit(_name) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -170,8 +171,8 @@ contract TenXTokenV2 is
     }
 
     function MANAGER_setMaxes(
-        uint16 _balanceMax,
-        uint16 _transactionSizeMax
+        uint256 _balanceMax,
+        uint256 _transactionSizeMax
     ) external onlyRole(MANAGER_ROLE) {
         balanceMax = _balanceMax;
         transactionSizeMax = _transactionSizeMax;

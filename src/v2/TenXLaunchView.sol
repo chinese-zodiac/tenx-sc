@@ -21,6 +21,8 @@ contract TenXLaunchViewV2 {
         returns (
             string memory tokenLogoCID_,
             string memory descriptionMarkdownCID_,
+            uint256 balanceMax_,
+            uint256 transactionSizeMax_,
             IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -30,13 +32,13 @@ contract TenXLaunchViewV2 {
             uint16 sellTax_,
             uint16 sellBurn_,
             uint16 sellLpFee_,
-            uint16 balanceMax_,
-            uint16 transactionSizeMax_,
             uint64 launchTimestamp_
         )
     {
         tokenLogoCID_ = _token.tokenLogoCID();
         descriptionMarkdownCID_ = _token.descriptionMarkdownCID();
+        balanceMax_ = _token.balanceMax();
+        transactionSizeMax_ = _token.transactionSizeMax();
         ammCzusdPair_ = IAmmPair(_token.ammCzusdPair());
         taxReceiver_ = _token.taxReceiver();
         czusdGrant_ = TEN_X_LAUNCH.czusdGrant(address(_token));
@@ -46,8 +48,6 @@ contract TenXLaunchViewV2 {
         sellTax_ = _token.sellTax();
         sellBurn_ = _token.sellBurn();
         sellLpFee_ = _token.sellLpFee();
-        balanceMax_ = _token.balanceMax();
-        transactionSizeMax_ = _token.transactionSizeMax();
         launchTimestamp_ = _token.launchTimestamp();
     }
 
@@ -60,6 +60,8 @@ contract TenXLaunchViewV2 {
             TenXTokenV2 token_,
             string memory tokenLogoCID_,
             string memory descriptionMarkdownCID_,
+            uint256 balanceMax_,
+            uint256 transactionSizeMax_,
             IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -69,8 +71,6 @@ contract TenXLaunchViewV2 {
             uint16 sellTax_,
             uint16 sellBurn_,
             uint16 sellLpFee_,
-            uint16 balanceMax_,
-            uint16 transactionSizeMax_,
             uint64 launchTimestamp_
         )
     {
@@ -78,6 +78,8 @@ contract TenXLaunchViewV2 {
         (
             tokenLogoCID_,
             descriptionMarkdownCID_,
+            balanceMax_,
+            transactionSizeMax_,
             ammCzusdPair_,
             taxReceiver_,
             czusdGrant_,
@@ -87,8 +89,6 @@ contract TenXLaunchViewV2 {
             sellTax_,
             sellBurn_,
             sellLpFee_,
-            balanceMax_,
-            transactionSizeMax_,
             launchTimestamp_
         ) = getTenXTokenData(token_);
     }

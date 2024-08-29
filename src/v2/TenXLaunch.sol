@@ -34,6 +34,8 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         string memory _symbol,
         string memory _tokenLogoCID,
         string memory _descriptionMarkdownCID,
+        uint256 _balanceMax,
+        uint256 _transactionSizeMax,
         address _taxReceiver,
         uint16 _buyTax,
         uint16 _buyBurn,
@@ -41,8 +43,6 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         uint16 _sellTax,
         uint16 _sellBurn,
         uint16 _sellLpFee,
-        uint16 _balanceMax,
-        uint16 _transactionSizeMax,
         uint64 _launchTimestamp
     ) external {
         tenXSettings.blacklist().revertIfAccountBlacklisted(msg.sender);
@@ -65,6 +65,8 @@ contract TenXLaunchV2 is AccessControlEnumerable {
             _tokenLogoCID, //string memory _tokenLogoCID,
             _descriptionMarkdownCID, //string memory _descriptionMarkdownCID,
             tenXSettings, //TenXSettingsV2 _tenXSettings,
+            _balanceMax, //uint256 _balanceMax,
+            _transactionSizeMax, //uint256 _transactionSizeMax,
             _czusdWad, //uint256 _supply,  XYZ = 1 CZUSD
             _taxReceiver, //address _taxReceiver,
             _buyTax, //uint16 _buyTax,
@@ -73,8 +75,6 @@ contract TenXLaunchV2 is AccessControlEnumerable {
             _sellTax, //uint16 _sellTax,
             _sellBurn, //uint16 _sellBurn,
             _sellLpFee, //uint16 _sellLpFee,
-            _balanceMax, //uint16 _balanceMax,
-            _transactionSizeMax, //uint16 _transactionSizeMax,
             _launchTimestamp //uint64 _launchTimestamp
         );
 
