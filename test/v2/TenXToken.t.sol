@@ -9,6 +9,7 @@ import {ERC20BurnMintMock} from "../mocks/ERC20BurnMintMock.sol";
 import {WETH} from "../../src/amm/lib/WETH.sol";
 import {AmmFactory} from "../../src/amm/AmmFactory.sol";
 import {AmmRouter} from "../../src/amm/AmmRouter02.sol";
+import {AmmZapV1} from "../../src/amm/AmmZapV1.sol";
 
 import {TenXTokenV2} from "../../src/v2/TenXToken.sol";
 import {TenXSettingsV2} from "../../src/v2/TenXSettings.sol";
@@ -26,6 +27,7 @@ contract TestTenXTokenV2 is Test {
         weth = new WETH();
         ammFactory = new AmmFactory(address(this));
         ammRouter = new AmmRouter(address(ammFactory), address(weth));
+        AmmZapV1 ammZap = new AmmZapV1(address(weth), address(ammRouter), 50);
 
         czusd = new ERC20BurnMintMock("Czodiac Usd", "CZUSD");
 
@@ -34,7 +36,8 @@ contract TestTenXTokenV2 is Test {
             tenXBlacklist,
             czusd,
             ammRouter,
-            ammFactory
+            ammFactory,
+            ammZap
         );
     }
 
@@ -681,5 +684,178 @@ contract TestTenXTokenV2 is Test {
         assertApproxEqRel(expectedTokenBurned, burn, 0.0001 ether);
         assertApproxEqRel(expectedTokenLpFee, lpFee, 0.0001 ether);
         assertApproxEqRel(expectedTokenReceived, tokenReceived, 0.0001 ether);
+    }
+
+    function test_sellExempt() public {
+        address taxReceiver = makeAddr("taxReceiver");
+        TenXTokenV2 token = new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            20_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            1_00, //uint16 _buyTax,
+            1_25, //uint16 _buyBurn,
+            1_50, //uint16 _buyLpFee,
+            2_00, //uint16 _sellTax,
+            2_25, //uint16 _sellBurn,
+            2_50, //uint16 _sellLpFee,
+            0 //uint64 _launchTimestamp
+        );
+        czusd.mint(address(this), 10_000 ether);
+        czusd.approve(address(ammRouter), 20_000 ether);
+        token.approve(address(ammRouter), 20_000 ether);
+        ammRouter.addLiquidity(
+            address(czusd),
+            address(token),
+            10_000 ether,
+            10_000 ether,
+            0,
+            0,
+            address(this),
+            block.timestamp
+        );
+        address[] memory path = new address[](2);
+        path[0] = address(token);
+        path[1] = address(czusd);
+        ammRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            1 ether,
+            0.99 ether,
+            path,
+            address(this),
+            block.timestamp
+        );
+
+        assertEq(1 ether, 10_000 ether - token.balanceOf(address(this)));
+        assertApproxEqRel(
+            0.9975 ether,
+            czusd.balanceOf(address(this)),
+            0.0001 ether
+        );
+    }
+
+    function test_sellTaxed() public {
+        address taxReceiver = makeAddr("taxReceiver");
+        TenXTokenV2 token = new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            10_000 ether, //uint256 _balanceMax,
+            10_000 ether, //uint256 _transactionSizeMax,
+            20_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            1_00, //uint16 _buyTax,
+            1_25, //uint16 _buyBurn,
+            1_50, //uint16 _buyLpFee,
+            2_00, //uint16 _sellTax,
+            2_25, //uint16 _sellBurn,
+            2_50, //uint16 _sellLpFee,
+            0 //uint64 _launchTimestamp
+        );
+        czusd.mint(address(this), 10_000 ether);
+        czusd.approve(address(ammRouter), 20_000 ether);
+        token.approve(address(ammRouter), 20_000 ether);
+        ammRouter.addLiquidity(
+            address(czusd),
+            address(token),
+            10_000 ether,
+            10_000 ether,
+            0,
+            0,
+            address(this),
+            block.timestamp
+        );
+        address[] memory path = new address[](2);
+        path[0] = address(token);
+        path[1] = address(czusd);
+
+        address trader1 = makeAddr("trader1");
+        token.transfer(trader1, 10_000 ether);
+
+        vm.startPrank(trader1);
+        token.approve(address(ammRouter), 10_000 ether);
+        ammRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            1 ether,
+            0.9 ether,
+            path,
+            trader1,
+            block.timestamp
+        );
+        vm.stopPrank();
+
+        uint256 expectedCzusdBoughtApprox = 0.9975 ether;
+        uint256 expectedTokenTaxed = (1 ether * 2_00) / 10_000;
+        uint256 expectedTokenBurned = (1 ether * 2_25) / 10_000;
+        uint256 expectedTokenLpFee = (1 ether * 2_50) / 10_000;
+        uint256 expectedCzusdReceived = expectedCzusdBoughtApprox -
+            expectedTokenTaxed -
+            expectedTokenBurned -
+            expectedTokenLpFee;
+
+        uint256 tax = token.balanceOf(address(taxReceiver));
+        uint256 burn = 20_000 ether - token.totalSupply();
+        uint256 lpFee = token.balanceOf(address(token));
+        uint256 czusdReceived = czusd.balanceOf(trader1);
+
+        assertFalse(token.isExempt(trader1));
+        assertEq(1 ether, 10_000 ether - token.balanceOf(address(trader1)));
+        assertApproxEqRel(
+            0.9975 ether,
+            czusdReceived + tax + burn + lpFee,
+            0.001 ether
+        );
+        assertApproxEqRel(expectedTokenTaxed, tax, 0.0001 ether);
+        assertApproxEqRel(expectedTokenBurned, burn, 0.0001 ether);
+        assertApproxEqRel(expectedTokenLpFee, lpFee, 0.0001 ether);
+        assertApproxEqRel(expectedCzusdReceived, czusdReceived, 0.001 ether);
+    }
+
+    function test_zap() public {
+        address taxReceiver = makeAddr("taxReceiver");
+        TenXTokenV2 token = new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            10_000 ether, //uint256 _balanceMax,
+            10_000 ether, //uint256 _transactionSizeMax,
+            20_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            1_00, //uint16 _buyTax,
+            1_25, //uint16 _buyBurn,
+            1_50, //uint16 _buyLpFee,
+            2_00, //uint16 _sellTax,
+            2_25, //uint16 _sellBurn,
+            2_50, //uint16 _sellLpFee,
+            0 //uint64 _launchTimestamp
+        );
+        czusd.mint(address(this), 10_000 ether);
+        czusd.approve(address(ammRouter), 20_000 ether);
+        token.approve(address(ammRouter), 20_000 ether);
+        ammRouter.addLiquidity(
+            address(czusd),
+            address(token),
+            10_000 ether,
+            10_000 ether,
+            0,
+            0,
+            address(this),
+            block.timestamp
+        );
+
+        token.transfer(address(token), 2 ether);
+
+        assertApproxEqRel(
+            10_002 ether,
+            token.balanceOf(token.ammCzusdPair()),
+            0.0000001 ether
+        );
     }
 }

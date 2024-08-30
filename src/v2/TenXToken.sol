@@ -9,6 +9,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {AmmZapV1} from "../amm/AmmZapV1.sol";
 
 import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
 
@@ -148,8 +149,8 @@ contract TenXTokenV2 is
         emit SetAmmCzusdPair(ammCzusdPair);
     }
 
-    function ADMIN_swapAndLiquify() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _swapAndLiquify();
+    function ADMIN_zap() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _zap();
     }
 
     function MANAGER_setTaxes(
@@ -303,10 +304,10 @@ contract TenXTokenV2 is
         //If theres enough tokens available, swap to LP
         //Can also be done manually by admin
         if (
-            balanceOf(address(this)) >
+            balanceOf(address(this)) >=
             (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
         ) {
-            _swapAndLiquify();
+            _zap();
         }
     }
 
@@ -360,42 +361,13 @@ contract TenXTokenV2 is
         }
     }
 
-    function _swapAndLiquify() private {
-        uint256 bal = balanceOf(address(this));
-
-        address czusd = address(tenXSettings.czusd());
-        IAmmRouter02 router = tenXSettings.ammRouter();
-
-        uint256 tokens = bal / 2;
-        uint256 toSwap = bal - tokens;
-
-        address[] memory path = new address[](2);
-        path[0] = address(this);
-        path[1] = czusd;
-
-        // Swap toSwap of address(this) to czusd
-        approve(address(router), toSwap);
-        router.swapExactTokensForTokens(
-            toSwap,
-            0, // accept any amount of czusd
-            path,
-            address(this),
-            block.timestamp
-        );
-        uint256 czusdBal = IERC20(czusd).balanceOf(address(this));
-
-        // Add liquidity and burn it
-        approve(address(router), tokens);
-        IERC20(czusd).approve(address(router), czusdBal);
-        router.addLiquidity(
-            czusd,
-            address(this),
-            czusdBal,
-            tokens,
-            0,
-            0,
-            address(0x0),
-            block.timestamp
-        );
+    function _zap() private {
+        uint256 zapAmount = balanceOf(address(this));
+        AmmZapV1 ammZap = tenXSettings.ammZapV1();
+        _approve(address(this), address(ammZap), zapAmount);
+        bool prevZapExempt = isExempt[address(ammZap)];
+        isExempt[address(ammZap)] = true;
+        ammZap.zapInToken(address(this), zapAmount, ammCzusdPair, 0);
+        isExempt[address(ammZap)] = prevZapExempt;
     }
 }

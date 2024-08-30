@@ -8,6 +8,7 @@ import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
 import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
 import {TenXBlacklistV2} from "./TenXBlacklist.sol";
 import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
+import {AmmZapV1} from "../amm/AmmZapV1.sol";
 
 contract TenXSettingsV2 is AccessControlEnumerable {
     uint256 public czusdGrantCap = 5_000 ether;
@@ -24,6 +25,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     IERC20Mintable public czusd;
     IAmmRouter02 public ammRouter;
     IAmmFactory public ammFactory;
+    AmmZapV1 public ammZapV1;
 
     event SetCzusdGrantCap(uint256 to);
     event SetCzusdGrantFlor(uint256 to);
@@ -38,6 +40,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     event SetCzusd(IERC20Mintable to);
     event SetAmmRouter(IAmmRouter02 to);
     event SetAmmFactory(IAmmFactory to);
+    event SetAmmZapV1(AmmZapV1 to);
 
     error OverCap(uint256 amount, uint256 cap);
     error UnderFloor(uint256 amount, uint256 floor);
@@ -46,12 +49,14 @@ contract TenXSettingsV2 is AccessControlEnumerable {
         TenXBlacklistV2 _blacklist,
         IERC20Mintable _czusd,
         IAmmRouter02 _ammRouter,
-        IAmmFactory _ammFactory
+        IAmmFactory _ammFactory,
+        AmmZapV1 _ammZapV1
     ) {
         blacklist = _blacklist;
         czusd = _czusd;
         ammRouter = _ammRouter;
         ammFactory = _ammFactory;
+        ammZapV1 = _ammZapV1;
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         emit SetCzusdGrantCap(czusdGrantCap);
@@ -67,6 +72,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
         emit SetCzusd(czusd);
         emit SetAmmRouter(ammRouter);
         emit SetAmmFactory(ammFactory);
+        emit SetAmmZapV1(ammZapV1);
     }
 
     function setCzusdGrantCap(
@@ -140,5 +146,9 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         ammFactory = to;
         emit SetAmmFactory(ammFactory);
+    }
+    function setAmmZapV1(AmmZapV1 to) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        ammZapV1 = to;
+        emit SetAmmZapV1(to);
     }
 }
