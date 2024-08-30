@@ -3,6 +3,7 @@ pragma solidity ^0.8.23;
 
 import {Test} from "forge-std/Test.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 
 import {ERC20BurnMintMock} from "../mocks/ERC20BurnMintMock.sol";
 
@@ -857,5 +858,211 @@ contract TestTenXTokenV2 is Test {
             token.balanceOf(token.ammCzusdPair()),
             0.0000001 ether
         );
+    }
+
+    function test_adminMethodAccessControlReverts() public {
+        address notAdmin = makeAddr("notAdmin");
+        address manager = makeAddr("manager");
+        address taxReceiver = makeAddr("taxReceiver");
+        TenXTokenV2 token = new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            10_000 ether, //uint256 _balanceMax,
+            10_000 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            1_00, //uint16 _buyTax,
+            1_25, //uint16 _buyBurn,
+            1_50, //uint16 _buyLpFee,
+            2_00, //uint16 _sellTax,
+            2_25, //uint16 _sellBurn,
+            2_50, //uint16 _sellLpFee,
+            0 //uint64 _launchTimestamp
+        );
+        token.grantRole(token.MANAGER_ROLE(), manager);
+
+        vm.startPrank(notAdmin);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notAdmin,
+                token.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        token.ADMIN_setAmmCzusdPair(address(0x0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notAdmin,
+                token.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        token.ADMIN_setTenXSettings(TenXSettingsV2(address(0x0)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notAdmin,
+                token.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        token.ADMIN_zap();
+        vm.stopPrank();
+
+        vm.startPrank(manager);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                manager,
+                token.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        token.ADMIN_setAmmCzusdPair(address(0x0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                manager,
+                token.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        token.ADMIN_setTenXSettings(TenXSettingsV2(address(0x0)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                manager,
+                token.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        token.ADMIN_zap();
+        vm.stopPrank();
+    }
+
+    function test_managerMethodAccessControlReverts() public {
+        address notManager = makeAddr("notManager");
+        address admin = makeAddr("admin");
+        address taxReceiver = makeAddr("taxReceiver");
+        TenXTokenV2 token = new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            10_000 ether, //uint256 _balanceMax,
+            10_000 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            1_00, //uint16 _buyTax,
+            1_25, //uint16 _buyBurn,
+            1_50, //uint16 _buyLpFee,
+            2_00, //uint16 _sellTax,
+            2_25, //uint16 _sellBurn,
+            2_50, //uint16 _sellLpFee,
+            0 //uint64 _launchTimestamp
+        );
+        token.grantRole(token.DEFAULT_ADMIN_ROLE(), admin);
+
+        vm.startPrank(notManager);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notManager,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setDescriptionMarkdownCID("");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notManager,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setIsExempt(address(0x0), false);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notManager,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setMaxes(0, 0);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notManager,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setTaxes(0, 0, 0, 0, 0, 0);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notManager,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setTaxReceiver(address(0x0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                notManager,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setTokenLogoCID("");
+        vm.stopPrank();
+
+        vm.startPrank(admin);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                admin,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setDescriptionMarkdownCID("");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                admin,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setIsExempt(address(0x0), false);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                admin,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setMaxes(0, 0);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                admin,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setTaxes(0, 0, 0, 0, 0, 0);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                admin,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setTaxReceiver(address(0x0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                admin,
+                token.MANAGER_ROLE()
+            )
+        );
+        token.MANAGER_setTokenLogoCID("");
+        vm.stopPrank();
     }
 }
