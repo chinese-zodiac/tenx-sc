@@ -303,7 +303,7 @@ contract TenXTokenV2 is
         //If theres enough tokens available, swap to LP
         //Can also be done manually by admin
         if (
-            balanceOf(address(this)) >=
+            balanceOf(address(this)) >
             (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
         ) {
             _swapAndLiquify();
@@ -337,7 +337,7 @@ contract TenXTokenV2 is
             //sell taxes
             taxWad += (value * sellTax) / _BASIS;
             burnWad += (value * sellBurn) / _BASIS;
-            lpWad += (value * buyLpFee) / _BASIS;
+            lpWad += (value * sellLpFee) / _BASIS;
         }
 
         if (taxWad > 0) super._update(from, taxReceiver, taxWad);
