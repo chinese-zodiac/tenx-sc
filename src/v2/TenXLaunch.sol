@@ -45,6 +45,10 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         uint16 _sellLpFee,
         uint64 _launchTimestamp
     ) external {
+        if (_launchTimestamp == 0) {
+            //Pass 0 as launch timestamp to launch immediately.
+            _launchTimestamp = uint64(block.timestamp);
+        }
         tenXSettings.blacklist().revertIfAccountBlacklisted(msg.sender);
         if (_czusdWad > tenXSettings.czusdGrantCap()) {
             revert TenXSettingsV2.OverCap(

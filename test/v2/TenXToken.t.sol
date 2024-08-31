@@ -537,7 +537,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         czusd.mint(address(this), 20_000 ether);
         czusd.approve(address(ammRouter), 10_000 ether);
@@ -575,7 +575,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         czusd.mint(address(this), 20_000 ether);
         czusd.approve(address(ammRouter), 20_000 ether);
@@ -627,7 +627,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         czusd.mint(address(this), 20_000 ether);
         czusd.approve(address(ammRouter), 20_000 ether);
@@ -708,7 +708,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         czusd.mint(address(this), 10_000 ether);
         czusd.approve(address(ammRouter), 20_000 ether);
@@ -760,7 +760,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         czusd.mint(address(this), 10_000 ether);
         czusd.approve(address(ammRouter), 20_000 ether);
@@ -838,7 +838,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         czusd.mint(address(this), 10_000 ether);
         czusd.approve(address(ammRouter), 20_000 ether);
@@ -883,7 +883,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         token.grantRole(token.MANAGER_ROLE(), manager);
 
@@ -962,7 +962,7 @@ contract TestTenXTokenV2 is Test {
             2_00, //uint16 _sellTax,
             2_25, //uint16 _sellBurn,
             2_50, //uint16 _sellLpFee,
-            0 //uint64 _launchTimestamp
+            uint64(block.timestamp) //uint64 _launchTimestamp
         );
         token.grantRole(token.DEFAULT_ADMIN_ROLE(), admin);
 

@@ -4,6 +4,7 @@ pragma solidity ^0.8.23;
 
 import {TenXLaunchV2} from "./TenXLaunch.sol";
 import {TenXTokenV2} from "./TenXToken.sol";
+import {TenXSettingsV2} from "./TenXSettings.sol";
 import {IAmmPair} from "../interfaces/IAmmPair.sol";
 
 contract TenXLaunchViewV2 {
@@ -23,6 +24,8 @@ contract TenXLaunchViewV2 {
             string memory descriptionMarkdownCID_,
             uint256 balanceMax_,
             uint256 transactionSizeMax_,
+            uint256 initialSupply_,
+            uint256 totalSupply_,
             IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -39,6 +42,8 @@ contract TenXLaunchViewV2 {
         descriptionMarkdownCID_ = _token.descriptionMarkdownCID();
         balanceMax_ = _token.balanceMax();
         transactionSizeMax_ = _token.transactionSizeMax();
+        initialSupply_ = _token.INITIAL_SUPPLY();
+        totalSupply_ = _token.totalSupply();
         ammCzusdPair_ = IAmmPair(_token.ammCzusdPair());
         taxReceiver_ = _token.taxReceiver();
         czusdGrant_ = TEN_X_LAUNCH.czusdGrant(address(_token));
@@ -62,6 +67,8 @@ contract TenXLaunchViewV2 {
             string memory descriptionMarkdownCID_,
             uint256 balanceMax_,
             uint256 transactionSizeMax_,
+            uint256 initialSupply_,
+            uint256 totalSupply_,
             IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -80,6 +87,8 @@ contract TenXLaunchViewV2 {
             descriptionMarkdownCID_,
             balanceMax_,
             transactionSizeMax_,
+            initialSupply_,
+            totalSupply_,
             ammCzusdPair_,
             taxReceiver_,
             czusdGrant_,
@@ -91,5 +100,30 @@ contract TenXLaunchViewV2 {
             sellLpFee_,
             launchTimestamp_
         ) = getTenXTokenData(token_);
+    }
+
+    function getTenXTokenLpData(
+        TenXTokenV2 _token
+    )
+        public
+        view
+        returns (
+            uint256 tokensInLP_,
+            uint256 czusdInLP_,
+            uint256 tokenPriceCzusdWad_,
+            uint256 tokenMcapCzusd_,
+            uint256 totalLpValueCzusd_
+        )
+    {
+        address ammCzusdPair = _token.ammCzusdPair();
+        tokensInLP_ = _token.balanceOf(ammCzusdPair);
+        czusdInLP_ = TEN_X_LAUNCH.tenXSettings().czusd().balanceOf(
+            ammCzusdPair
+        );
+        tokenPriceCzusdWad_ = (czusdInLP_ * 1 ether) / tokensInLP_;
+        tokenMcapCzusd_ =
+            (tokenPriceCzusdWad_ * _token.totalSupply()) /
+            1 ether;
+        totalLpValueCzusd_ = czusdInLP_ * 2;
     }
 }

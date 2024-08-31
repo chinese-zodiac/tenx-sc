@@ -28,6 +28,8 @@ contract TenXTokenV2 is
 
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
+    uint256 public immutable INITIAL_SUPPLY;
+
     uint256 public balanceMax;
     uint256 public transactionSizeMax;
 
@@ -102,6 +104,7 @@ contract TenXTokenV2 is
             address(tenXSettings.czusd())
         );
         _mint(msg.sender, _supply);
+        INITIAL_SUPPLY = _supply;
 
         tokenLogoCID = _tokenLogoCID;
         descriptionMarkdownCID = _descriptionMarkdownCID;
@@ -124,6 +127,9 @@ contract TenXTokenV2 is
             tenXSettings.launchTimestampCap();
         if (launchTimestamp > maxLaunchTimestamp) {
             revert TenXSettingsV2.OverCap(launchTimestamp, maxLaunchTimestamp);
+        }
+        if (launchTimestamp < block.timestamp) {
+            revert TenXSettingsV2.UnderFloor(launchTimestamp, block.timestamp);
         }
 
         emit SetTaxes(buyTax, buyBurn, buyLpFee, sellTax, sellBurn, sellLpFee);
@@ -321,7 +327,7 @@ contract TenXTokenV2 is
             revert OverMax(value, transactionSizeMax);
         }
         //Revert if trading isnt open yet for public.
-        if (launchTimestamp != 0 && block.timestamp < launchTimestamp) {
+        if (block.timestamp < launchTimestamp) {
             revert BeforeCountdown(uint64(block.timestamp), launchTimestamp);
         }
         //Tax and burn for buys, sells
