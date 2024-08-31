@@ -18,14 +18,14 @@ contract TenXLaunchV2 is AccessControlEnumerable {
 
     TenXSettingsV2 public tenXSettings;
 
-    address public czodiacGovernance =
-        address(0x745A676C5c472b50B50e18D4b59e9AeEEc597046);
-
     event LaunchToken(TenXTokenV2 token, uint256 index, uint256 cuzsdGrant);
+    event SetTenXSettings(TenXSettingsV2 tenXSettings);
 
     constructor(TenXSettingsV2 _tenXSettings) {
         tenXSettings = _tenXSettings;
+        emit SetTenXSettings(tenXSettings);
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, tenXSettings.governance());
     }
 
     function launchToken(
@@ -101,8 +101,15 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         czusdGrant[address(token)] = _czusdWad;
         emit LaunchToken(token, launchedTokens.size() - 1, _czusdWad);
 
-        token.grantRole(DEFAULT_ADMIN_ROLE, czodiacGovernance);
+        token.grantRole(DEFAULT_ADMIN_ROLE, tenXSettings.governance());
         token.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
+    }
+
+    function ADMIN_setTenXSettings(
+        TenXSettingsV2 _tenXSettings
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        tenXSettings = _tenXSettings;
+        emit SetTenXSettings(tenXSettings);
     }
 
     function launchedTokensCount() external view returns (uint256) {

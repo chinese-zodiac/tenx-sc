@@ -21,6 +21,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     uint16 public balanceFloorBps = 1; //0.01%
     uint16 public swapLiquifyAtBps = 1; //0.01%
 
+    address public governance;
     TenXBlacklistV2 public blacklist;
     IERC20Mintable public czusd;
     IAmmRouter02 public ammRouter;
@@ -36,6 +37,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     event SetBalanceCapBps(uint16 to);
     event SetBalanceFloorBps(uint16 to);
     event SetSwapLiquifyAtBps(uint16 to);
+    event SetGovernance(address to);
     event SetBlacklist(TenXBlacklistV2 to);
     event SetCzusd(IERC20Mintable to);
     event SetAmmRouter(IAmmRouter02 to);
@@ -46,12 +48,14 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     error UnderFloor(uint256 amount, uint256 floor);
 
     constructor(
+        address _governance,
         TenXBlacklistV2 _blacklist,
         IERC20Mintable _czusd,
         IAmmRouter02 _ammRouter,
         IAmmFactory _ammFactory,
         AmmZapV1 _ammZapV1
     ) {
+        governance = _governance;
         blacklist = _blacklist;
         czusd = _czusd;
         ammRouter = _ammRouter;
@@ -68,6 +72,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
         emit SetBalanceCapBps(balanceCapBps);
         emit SetBalanceFloorBps(balanceFloorBps);
         emit SetSwapLiquifyAtBps(swapLiquifyAtBps);
+        emit SetGovernance(governance);
         emit SetBlacklist(blacklist);
         emit SetCzusd(czusd);
         emit SetAmmRouter(ammRouter);
@@ -124,6 +129,12 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         swapLiquifyAtBps = to;
         emit SetSwapLiquifyAtBps(swapLiquifyAtBps);
+    }
+    function setCzodiacGovernance(
+        address to
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        governance = to;
+        emit SetGovernance(governance);
     }
     function setBlacklist(
         TenXBlacklistV2 to

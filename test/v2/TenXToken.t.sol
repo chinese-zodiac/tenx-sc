@@ -17,6 +17,7 @@ import {TenXSettingsV2} from "../../src/v2/TenXSettings.sol";
 import {TenXBlacklistV2} from "../../src/v2/TenXBlacklist.sol";
 
 contract TestTenXTokenV2 is Test {
+    address public governance;
     WETH public weth;
     AmmFactory public ammFactory;
     AmmRouter public ammRouter;
@@ -25,6 +26,7 @@ contract TestTenXTokenV2 is Test {
     TenXBlacklistV2 public tenXBlacklist;
 
     function setUp() public {
+        governance = makeAddr("governance");
         weth = new WETH();
         ammFactory = new AmmFactory(address(this));
         ammRouter = new AmmRouter(address(ammFactory), address(weth));
@@ -34,6 +36,7 @@ contract TestTenXTokenV2 is Test {
 
         tenXBlacklist = new TenXBlacklistV2();
         tenXSettings = new TenXSettingsV2(
+            governance,
             tenXBlacklist,
             czusd,
             ammRouter,
