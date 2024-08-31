@@ -106,6 +106,7 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         emit LaunchToken(token, launchedTokens.size() - 1, _czusdWad);
 
         token.grantRole(DEFAULT_ADMIN_ROLE, tenXSettings.governance());
+        token.grantRole(token.MANAGER_ROLE(), msg.sender);
         token.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
     }
 
@@ -120,7 +121,9 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         return launchedTokens.size();
     }
 
-    function launchedTokenAt(uint256 index) external view returns (address) {
-        return launchedTokens.getKeyAtIndex(index);
+    function launchedTokenAt(
+        uint256 index
+    ) external view returns (TenXTokenV2) {
+        return TenXTokenV2(launchedTokens.getKeyAtIndex(index));
     }
 }

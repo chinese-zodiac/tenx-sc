@@ -11,10 +11,10 @@ import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
 import {AmmZapV1} from "../amm/AmmZapV1.sol";
 
 contract TenXSettingsV2 is AccessControlEnumerable {
-    uint256 public czusdGrantCap = 5_000 ether;
+    uint256 public czusdGrantCap = 10_000 ether;
     uint256 public czusdGrantFloor = 5_000 ether;
     uint64 public launchTimestampCap = 90 days;
-    uint16 public taxesTotalCap = 20_00; //20.00%
+    uint16 public taxesTotalCap = 30_00; //30.00%
     uint16 public transactionSizeCapBps = 100_00; //100.00%
     uint16 public transactionSizeFloorBps = 1; //0.01%
     uint16 public balanceCapBps = 100_00; //100.00%

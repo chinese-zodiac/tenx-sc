@@ -24,8 +24,6 @@ contract TenXLaunchViewV2 {
             string memory descriptionMarkdownCID_,
             uint256 balanceMax_,
             uint256 transactionSizeMax_,
-            uint256 initialSupply_,
-            uint256 totalSupply_,
             IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -42,8 +40,6 @@ contract TenXLaunchViewV2 {
         descriptionMarkdownCID_ = _token.descriptionMarkdownCID();
         balanceMax_ = _token.balanceMax();
         transactionSizeMax_ = _token.transactionSizeMax();
-        initialSupply_ = _token.INITIAL_SUPPLY();
-        totalSupply_ = _token.totalSupply();
         ammCzusdPair_ = IAmmPair(_token.ammCzusdPair());
         taxReceiver_ = _token.taxReceiver();
         czusdGrant_ = TEN_X_LAUNCH.czusdGrant(address(_token));
@@ -67,8 +63,6 @@ contract TenXLaunchViewV2 {
             string memory descriptionMarkdownCID_,
             uint256 balanceMax_,
             uint256 transactionSizeMax_,
-            uint256 initialSupply_,
-            uint256 totalSupply_,
             IAmmPair ammCzusdPair_,
             address taxReceiver_,
             uint256 czusdGrant_,
@@ -87,8 +81,6 @@ contract TenXLaunchViewV2 {
             descriptionMarkdownCID_,
             balanceMax_,
             transactionSizeMax_,
-            initialSupply_,
-            totalSupply_,
             ammCzusdPair_,
             taxReceiver_,
             czusdGrant_,
@@ -108,6 +100,8 @@ contract TenXLaunchViewV2 {
         public
         view
         returns (
+            uint256 initialSupply_,
+            uint256 totalSupply_,
             uint256 tokensInLP_,
             uint256 czusdInLP_,
             uint256 tokenPriceCzusdWad_,
@@ -116,6 +110,8 @@ contract TenXLaunchViewV2 {
         )
     {
         address ammCzusdPair = _token.ammCzusdPair();
+        initialSupply_ = _token.INITIAL_SUPPLY();
+        totalSupply_ = _token.totalSupply();
         tokensInLP_ = _token.balanceOf(ammCzusdPair);
         czusdInLP_ = TEN_X_LAUNCH.tenXSettings().czusd().balanceOf(
             ammCzusdPair

@@ -108,7 +108,7 @@ contract TestTenXTokenV2 is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                30_00,
+                30_01,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -122,7 +122,7 @@ contract TestTenXTokenV2 is Test {
             250 ether, //uint256 _transactionSizeMax,
             10_000 ether, //uint256 _supply,
             taxReceiver, //address _taxReceiver,
-            5_00, //uint16 _buyTax,
+            5_01, //uint16 _buyTax,
             5_00, //uint16 _buyBurn,
             5_00, //uint16 _buyLpFee,
             5_00, //uint16 _sellTax,
@@ -133,7 +133,7 @@ contract TestTenXTokenV2 is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                29_00,
+                31_00,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -152,13 +152,13 @@ contract TestTenXTokenV2 is Test {
             3_00, //uint16 _buyLpFee,
             5_00, //uint16 _sellTax,
             7_00, //uint16 _sellBurn,
-            11_00, //uint16 _sellLpFee,
+            13_00, //uint16 _sellLpFee,
             launchTimestamp //uint64 _launchTimestamp
         );
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                20_01,
+                30_01,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -172,7 +172,7 @@ contract TestTenXTokenV2 is Test {
             250 ether, //uint256 _transactionSizeMax,
             10_000 ether, //uint256 _supply,
             taxReceiver, //address _taxReceiver,
-            20_01, //uint16 _buyTax,
+            30_01, //uint16 _buyTax,
             0, //uint16 _buyBurn,
             0, //uint16 _buyLpFee,
             0, //uint16 _sellTax,
@@ -183,7 +183,7 @@ contract TestTenXTokenV2 is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                20_01,
+                30_01,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -198,7 +198,7 @@ contract TestTenXTokenV2 is Test {
             10_000 ether, //uint256 _supply,
             taxReceiver, //address _taxReceiver,
             0, //uint16 _buyTax,
-            20_01, //uint16 _buyBurn,
+            30_01, //uint16 _buyBurn,
             0, //uint16 _buyLpFee,
             0, //uint16 _sellTax,
             0, //uint16 _sellBurn,
@@ -208,32 +208,7 @@ contract TestTenXTokenV2 is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                20_01,
-                tenXSettings.taxesTotalCap()
-            )
-        );
-        new TenXTokenV2(
-            "TestX", //string memory _name,
-            "TX", //string memory _symbol,
-            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
-            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
-            tenXSettings, //TenXSettingsV2 _tenXSettings,
-            5_000 ether, //uint256 _balanceMax,
-            250 ether, //uint256 _transactionSizeMax,
-            10_000 ether, //uint256 _supply,
-            taxReceiver, //address _taxReceiver,
-            0, //uint16 _buyTax,
-            0, //uint16 _buyBurn,
-            20_01, //uint16 _buyLpFee,
-            0, //uint16 _sellTax,
-            0, //uint16 _sellBurn,
-            0, //uint16 _sellLpFee,
-            launchTimestamp //uint64 _launchTimestamp
-        );
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                TenXSettingsV2.OverCap.selector,
-                20_01,
+                30_01,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -249,8 +224,8 @@ contract TestTenXTokenV2 is Test {
             taxReceiver, //address _taxReceiver,
             0, //uint16 _buyTax,
             0, //uint16 _buyBurn,
-            0, //uint16 _buyLpFee,
-            20_01, //uint16 _sellTax,
+            30_01, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
             0, //uint16 _sellBurn,
             0, //uint16 _sellLpFee,
             launchTimestamp //uint64 _launchTimestamp
@@ -258,7 +233,7 @@ contract TestTenXTokenV2 is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                20_01,
+                30_01,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -275,15 +250,15 @@ contract TestTenXTokenV2 is Test {
             0, //uint16 _buyTax,
             0, //uint16 _buyBurn,
             0, //uint16 _buyLpFee,
-            0, //uint16 _sellTax,
-            20_01, //uint16 _sellBurn,
+            30_01, //uint16 _sellTax,
+            0, //uint16 _sellBurn,
             0, //uint16 _sellLpFee,
             launchTimestamp //uint64 _launchTimestamp
         );
         vm.expectRevert(
             abi.encodeWithSelector(
                 TenXSettingsV2.OverCap.selector,
-                20_01,
+                30_01,
                 tenXSettings.taxesTotalCap()
             )
         );
@@ -301,8 +276,33 @@ contract TestTenXTokenV2 is Test {
             0, //uint16 _buyBurn,
             0, //uint16 _buyLpFee,
             0, //uint16 _sellTax,
+            30_01, //uint16 _sellBurn,
+            0, //uint16 _sellLpFee,
+            launchTimestamp //uint64 _launchTimestamp
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                TenXSettingsV2.OverCap.selector,
+                30_01,
+                tenXSettings.taxesTotalCap()
+            )
+        );
+        new TenXTokenV2(
+            "TestX", //string memory _name,
+            "TX", //string memory _symbol,
+            "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
+            "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu", //string memory _descriptionMarkdownCID,
+            tenXSettings, //TenXSettingsV2 _tenXSettings,
+            5_000 ether, //uint256 _balanceMax,
+            250 ether, //uint256 _transactionSizeMax,
+            10_000 ether, //uint256 _supply,
+            taxReceiver, //address _taxReceiver,
+            0, //uint16 _buyTax,
+            0, //uint16 _buyBurn,
+            0, //uint16 _buyLpFee,
+            0, //uint16 _sellTax,
             0, //uint16 _sellBurn,
-            20_01, //uint16 _sellLpFee,
+            30_01, //uint16 _sellLpFee,
             launchTimestamp //uint64 _launchTimestamp
         );
         vm.expectRevert(
