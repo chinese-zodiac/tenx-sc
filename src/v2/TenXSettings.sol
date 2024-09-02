@@ -6,6 +6,7 @@ import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions
 import {IERC20Mintable} from "../interfaces/IERC20Mintable.sol";
 import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
 import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
+import {TenXTokenFactoryV2} from "./TenXTokenFactory.sol";
 import {TenXBlacklistV2} from "./TenXBlacklist.sol";
 import {IAmmFactory} from "../interfaces/IAmmFactory.sol";
 import {AmmZapV1} from "../amm/AmmZapV1.sol";
@@ -23,6 +24,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
 
     address public governance;
     TenXBlacklistV2 public blacklist;
+    TenXTokenFactoryV2 public tokenFactory;
     IERC20Mintable public czusd;
     IAmmRouter02 public ammRouter;
     IAmmFactory public ammFactory;
@@ -39,6 +41,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     event SetSwapLiquifyAtBps(uint16 to);
     event SetGovernance(address to);
     event SetBlacklist(TenXBlacklistV2 to);
+    event SetTokenFactory(TenXTokenFactoryV2 to);
     event SetCzusd(IERC20Mintable to);
     event SetAmmRouter(IAmmRouter02 to);
     event SetAmmFactory(IAmmFactory to);
@@ -50,6 +53,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     constructor(
         address _governance,
         TenXBlacklistV2 _blacklist,
+        TenXTokenFactoryV2 _tokenFactory,
         IERC20Mintable _czusd,
         IAmmRouter02 _ammRouter,
         IAmmFactory _ammFactory,
@@ -57,6 +61,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     ) {
         governance = _governance;
         blacklist = _blacklist;
+        tokenFactory = _tokenFactory;
         czusd = _czusd;
         ammRouter = _ammRouter;
         ammFactory = _ammFactory;
@@ -74,6 +79,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
         emit SetSwapLiquifyAtBps(swapLiquifyAtBps);
         emit SetGovernance(governance);
         emit SetBlacklist(blacklist);
+        emit SetTokenFactory(tokenFactory);
         emit SetCzusd(czusd);
         emit SetAmmRouter(ammRouter);
         emit SetAmmFactory(ammFactory);
@@ -141,6 +147,12 @@ contract TenXSettingsV2 is AccessControlEnumerable {
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         blacklist = to;
         emit SetBlacklist(blacklist);
+    }
+    function setTokenFactory(
+        TenXTokenFactoryV2 to
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        tokenFactory = to;
+        emit SetTokenFactory(tokenFactory);
     }
     function setCzusd(IERC20Mintable to) external onlyRole(DEFAULT_ADMIN_ROLE) {
         czusd = to;

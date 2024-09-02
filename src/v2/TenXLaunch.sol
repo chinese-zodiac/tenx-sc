@@ -63,7 +63,7 @@ contract TenXLaunchV2 is AccessControlEnumerable {
             );
         }
 
-        TenXTokenV2 token = new TenXTokenV2(
+        TenXTokenV2 token = tenXSettings.tokenFactory().create(
             _name, //string memory _name,
             _symbol, //string memory _symbol,
             _tokenLogoCID, //string memory _tokenLogoCID,

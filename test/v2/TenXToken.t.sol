@@ -15,6 +15,7 @@ import {AmmZapV1} from "../../src/amm/AmmZapV1.sol";
 import {TenXTokenV2} from "../../src/v2/TenXToken.sol";
 import {TenXSettingsV2} from "../../src/v2/TenXSettings.sol";
 import {TenXBlacklistV2} from "../../src/v2/TenXBlacklist.sol";
+import {TenXTokenFactoryV2} from "../../src/v2/TenXTokenFactory.sol";
 
 contract TestTenXTokenV2 is Test {
     address public governance;
@@ -24,6 +25,7 @@ contract TestTenXTokenV2 is Test {
     ERC20BurnMintMock public czusd;
     TenXSettingsV2 public tenXSettings;
     TenXBlacklistV2 public tenXBlacklist;
+    TenXTokenFactoryV2 public tenXTokenFactory;
 
     function setUp() public {
         governance = makeAddr("governance");
@@ -35,9 +37,11 @@ contract TestTenXTokenV2 is Test {
         czusd = new ERC20BurnMintMock("Czodiac Usd", "CZUSD");
 
         tenXBlacklist = new TenXBlacklistV2();
+        tenXTokenFactory = new TenXTokenFactoryV2();
         tenXSettings = new TenXSettingsV2(
             governance,
             tenXBlacklist,
+            tenXTokenFactory,
             czusd,
             ammRouter,
             ammFactory,
@@ -49,6 +53,7 @@ contract TestTenXTokenV2 is Test {
         address taxReceiver = makeAddr("taxReceiver");
         uint64 launchTimestamp = uint64(block.timestamp + 1 days);
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -113,6 +118,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -138,6 +144,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -163,6 +170,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -188,6 +196,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -213,6 +222,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -238,6 +248,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -263,6 +274,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -288,6 +300,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -313,6 +326,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -338,6 +352,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -363,6 +378,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -388,6 +404,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -419,6 +436,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -448,6 +466,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            blacklistedAccount,
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -473,6 +492,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -500,6 +520,7 @@ contract TestTenXTokenV2 is Test {
             )
         );
         new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -522,6 +543,7 @@ contract TestTenXTokenV2 is Test {
     function test_addLiqExempt() public {
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -560,6 +582,7 @@ contract TestTenXTokenV2 is Test {
     function test_buyExempt() public {
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -612,6 +635,7 @@ contract TestTenXTokenV2 is Test {
     function test_buyTaxed() public {
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -693,6 +717,7 @@ contract TestTenXTokenV2 is Test {
     function test_sellExempt() public {
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -745,6 +770,7 @@ contract TestTenXTokenV2 is Test {
     function test_sellTaxed() public {
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -823,6 +849,7 @@ contract TestTenXTokenV2 is Test {
     function test_zap() public {
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -868,6 +895,7 @@ contract TestTenXTokenV2 is Test {
         address manager = makeAddr("manager");
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,
@@ -947,6 +975,7 @@ contract TestTenXTokenV2 is Test {
         address admin = makeAddr("admin");
         address taxReceiver = makeAddr("taxReceiver");
         TenXTokenV2 token = new TenXTokenV2(
+            address(this),
             "TestX", //string memory _name,
             "TX", //string memory _symbol,
             "bafkreigzyrltrxv44gajay5ohmzz7ys2b3ybtkitfy4aojjhkawvfdc7gm", //string memory _tokenLogoCID,

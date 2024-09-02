@@ -71,6 +71,7 @@ contract TenXTokenV2 is
     event SetTenXSettings(TenXSettingsV2 tenXSettings);
 
     constructor(
+        address creator,
         string memory _name,
         string memory _symbol,
         string memory _tokenLogoCID,
@@ -88,22 +89,22 @@ contract TenXTokenV2 is
         uint16 _sellLpFee,
         uint64 _launchTimestamp
     ) ERC20(_name, _symbol) ERC20Permit(_name) {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, creator);
 
         tenXSettings = _tenXSettings;
         taxReceiver = _taxReceiver;
         isExempt[taxReceiver] = true;
-        isExempt[msg.sender] = true;
+        isExempt[creator] = true;
         isExempt[address(this)] = true;
         emit SetIsExempt(taxReceiver, true);
-        emit SetIsExempt(msg.sender, true);
+        emit SetIsExempt(creator, true);
         emit SetIsExempt(address(this), true);
 
         ammCzusdPair = tenXSettings.ammFactory().createPair(
             address(this),
             address(tenXSettings.czusd())
         );
-        _mint(msg.sender, _supply);
+        _mint(creator, _supply);
         INITIAL_SUPPLY = _supply;
 
         tokenLogoCID = _tokenLogoCID;
@@ -213,7 +214,7 @@ contract TenXTokenV2 is
         emit SetTokenLogoCID(tokenLogoCID);
     }
 
-    //Guide: https://www.markdownguide.org/cheat-sheet/
+    //Guide: https://commonmark.org/help/
     //Upload to IPFS as .md file.
     function MANAGER_setDescriptionMarkdownCID(
         string calldata _descriptionMarkdownCID

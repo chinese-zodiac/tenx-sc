@@ -15,6 +15,7 @@ import {AmmZapV1} from "../../src/amm/AmmZapV1.sol";
 import {TenXTokenV2} from "../../src/v2/TenXToken.sol";
 import {TenXSettingsV2} from "../../src/v2/TenXSettings.sol";
 import {TenXBlacklistV2} from "../../src/v2/TenXBlacklist.sol";
+import {TenXTokenFactoryV2} from "../../src/v2/TenXTokenFactory.sol";
 import {TenXLaunchV2} from "../../src/v2/TenXLaunch.sol";
 
 contract TestTenXLaunchV2 is Test {
@@ -25,6 +26,7 @@ contract TestTenXLaunchV2 is Test {
     ERC20BurnMintMock public czusd;
     TenXSettingsV2 public tenXSettings;
     TenXBlacklistV2 public tenXBlacklist;
+    TenXTokenFactoryV2 public tenXTokenFactory;
     TenXLaunchV2 public tenXLaunch;
 
     function setUp() public {
@@ -37,9 +39,11 @@ contract TestTenXLaunchV2 is Test {
         czusd = new ERC20BurnMintMock("Czodiac Usd", "CZUSD");
 
         tenXBlacklist = new TenXBlacklistV2();
+        tenXTokenFactory = new TenXTokenFactoryV2();
         tenXSettings = new TenXSettingsV2(
             governance,
             tenXBlacklist,
+            tenXTokenFactory,
             czusd,
             ammRouter,
             ammFactory,
@@ -130,7 +134,6 @@ contract TestTenXLaunchV2 is Test {
 
     function test_constructorReverts() public {
         address taxReceiver = makeAddr("taxReceiver");
-        uint64 launchTimestamp = uint64(block.timestamp);
 
         vm.expectRevert(
             abi.encodeWithSelector(
