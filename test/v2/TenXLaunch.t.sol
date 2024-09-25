@@ -90,7 +90,6 @@ contract TestTenXLaunchV2 is Test {
         assertEq(tenXLaunch.launchedTokensCount(), 1);
         assertEq(czusd.balanceOf(ammCzusdPair), 5_000 ether);
         assertEq(token.balanceOf(ammCzusdPair), 5_000 ether);
-        assertEq(address(token.tenXSettings()), address(tenXSettings));
         assertEq(token.launchTimestamp(), launchTimestamp);
         assertEq(token.name(), "TestX");
         assertEq(token.symbol(), "TX");

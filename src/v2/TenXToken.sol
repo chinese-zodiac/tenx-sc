@@ -33,7 +33,7 @@ contract TenXTokenV2 is
     uint256 public balanceMax;
     uint256 public transactionSizeMax;
 
-    TenXSettingsV2 public tenXSettings;
+    TenXSettingsV2 internal tenXSettings;
 
     address public ammCzusdPair;
     address public taxReceiver;
@@ -48,6 +48,10 @@ contract TenXTokenV2 is
     uint16 public sellLpFee;
 
     uint64 public launchTimestamp;
+
+    uint256 public totalTaxWad;
+    uint256 public totalBurnWad;
+    uint256 public totalLpWad;
 
     error OverMax(uint256 amount, uint256 max);
     error BeforeCountdown(uint64 currentTimestamp, uint64 countdownTimestamp);
@@ -348,9 +352,18 @@ contract TenXTokenV2 is
             lpWad += (value * sellLpFee) / _BASIS;
         }
 
-        if (taxWad > 0) super._update(from, taxReceiver, taxWad);
-        if (burnWad > 0) super._update(from, address(0), burnWad);
-        if (lpWad > 0) super._update(from, address(this), lpWad);
+        if (taxWad > 0) {
+            super._update(from, taxReceiver, taxWad);
+            totalTaxWad += taxWad;
+        }
+        if (burnWad > 0) {
+            super._update(from, address(0), burnWad);
+            totalBurnWad += burnWad;
+        }
+        if (lpWad > 0) {
+            super._update(from, address(this), lpWad);
+            totalLpWad += lpWad;
+        }
         emit TaxesCollected(taxWad, burnWad, lpWad);
         super._update(from, to, value - taxWad - burnWad - lpWad);
     }

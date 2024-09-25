@@ -81,7 +81,6 @@ contract TestTenXTokenV2 is Test {
             "bafybeiferzfrkmoemcegmqtyccgbb5rrez6u2md4xmwsbwglz6ey4d4mgu",
             token.descriptionMarkdownCID()
         );
-        assertEq(address(tenXSettings), address(token.tenXSettings()));
         assertEq(10_000 ether, token.totalSupply());
         assertEq(taxReceiver, token.taxReceiver());
         assertEq(1, token.buyTax());

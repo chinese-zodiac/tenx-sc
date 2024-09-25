@@ -122,4 +122,20 @@ contract TenXLaunchViewV2 {
             1 ether;
         totalLpValueCzusd_ = czusdInLP_ * 2;
     }
+
+    function getTenXTokenFees(
+        TenXTokenV2 _token
+    )
+        public
+        view
+        returns (
+            uint256 totalTaxWad_,
+            uint256 totalBurnWad_,
+            uint256 totalLpWad_
+        )
+    {
+        totalTaxWad_ = _token.totalTaxWad();
+        totalBurnWad_ = _token.totalBurnWad();
+        totalLpWad_ = _token.totalLpWad();
+    }
 }
