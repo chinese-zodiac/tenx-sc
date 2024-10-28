@@ -312,6 +312,8 @@ contract TenXTokenV2 is
         //If theres enough tokens available, swap to LP
         //Can also be done manually by admin
         if (
+            to == ammCzusdPair && //sells only
+            from != address(this) && //Prevent loops
             balanceOf(address(this)) >=
             (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
         ) {
