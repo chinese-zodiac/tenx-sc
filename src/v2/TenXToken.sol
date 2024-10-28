@@ -313,7 +313,7 @@ contract TenXTokenV2 is
         //Can also be done manually by admin
         if (
             to == ammCzusdPair && //sells only
-            from != address(this) && //Prevent loops
+            from != address(tenXSettings.ammZapV1()) && //Prevent loops
             balanceOf(address(this)) >=
             (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
         ) {
