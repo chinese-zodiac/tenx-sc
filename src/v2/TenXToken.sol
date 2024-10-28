@@ -4,14 +4,11 @@ pragma solidity ^0.8.23;
 
 import {TenXSettingsV2} from "./TenXSettings.sol";
 import {TenXBlacklistV2} from "./TenXBlacklist.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {AmmZapV1} from "../amm/AmmZapV1.sol";
-
-import {IAmmRouter02} from "../interfaces/IAmmRouter02.sol";
 
 contract TenXTokenV2 is
     ERC20,
