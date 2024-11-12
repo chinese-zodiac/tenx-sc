@@ -26,6 +26,9 @@ BSC:0x9A62fE6B016f8ba28b64D822D4fB6E5206268C22
 TenXLaunchView
 BSC:0xFaCC24759420c63DdD39650268cAc0AA582eb682
 
+## build
+forge build --via-ir
+
 ## deployment
 
 Key variables are set in the script, and should be updated correctly for the network.

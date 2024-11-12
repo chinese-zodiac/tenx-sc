@@ -314,6 +314,7 @@ contract TenXTokenV2 is
         if (
             to == ammCzusdPair && //sells only
             from != address(tenXSettings.ammZapV1()) && //Prevent loops
+            to != address(tenXSettings.ammZapV1()) && //Prevent loops
             balanceOf(address(this)) >=
             (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
         ) {
