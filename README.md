@@ -10,13 +10,13 @@ Network: BSC Testnet
 
 | Contract                          | Address                                    |
 | --------------------------------- | ------------------------------------------ |
-| TenXLaunchViewV2                  | 0x7dc2F4B81846Af198D5E8d94c6E013B98E9C6Cba |
-| TenXLaunchV2                      | 0xB959E7D27fe1A44A0315D5c134D2BbA3E0c1246f |
-| TenXSettingsV2                    | 0x1C6ca5e2B2a41aF0C4bF781D43D5A31AFaB4EdaF |
-| TenXTokenFactoryV2                | 0x2dDEBc1B2726D2A4Df89946c7a26C96A3a63b51D |
-| TenXBlacklistV2                   | 0xf06AE5E56dB54004C0a166240A5c0CfcC6dfcd45 |
-| AmmZapV1                          | 0xdC119Ed4a4F921BDDC63adE95809F06f35345381 |
-| IterableArrayWithoutDuplicateKeys | 0xD0D0B3a423f6c76648EfcF6b4892AD60d2f2eF48 |
+| TenXLaunchViewV2                  | 0x44E70D023A8dAAE0253121Ce1e0eE3060EF81C75 |
+| TenXLaunchV2                      | 0x00e746Aa67Cf111917BbAD6e070116e2832D65B6 |
+| TenXSettingsV2                    | 0x6AEEe36069b881B536cA7d9761353ec2c2405B03 |
+| TenXTokenFactoryV2                | 0xAA934798B1215d95A608C3082131Bf0234C90eaE |
+| TenXBlacklistV2                   | 0xC324C1f146713b2d6ae6EcCa2DD4288c84D8018b |
+| AmmZapV1                          | 0x4DF8F9bE759c54BeBA853056a9278c6118892652 |
+| IterableArrayWithoutDuplicateKeys | 0x606E3cBB3fb84Ed08c31Cce44aB9A200F54A5630 |
 
 ### v1
 

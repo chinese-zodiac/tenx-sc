@@ -294,7 +294,7 @@ contract TenXTokenV2 is
         blacklist.revertIfAccountBlacklisted(to);
         if (
             (from != ammCzusdPair && to != ammCzusdPair) || //not a buy or sell
-            from == address(0) ||
+            //from == address(0) || Total supply is minted in constructor.
             to == address(0) ||
             value == 0 ||
             isExempt[from] ||
@@ -303,23 +303,20 @@ contract TenXTokenV2 is
             //Default behavior for mints, burns, exempt, transfers
             super._update(from, to, value);
         } else {
+
+            //If theres enough tokens available, swap to LP
+            //Can also be done manually by admin
+            if (
+                balanceOf(address(this)) >=
+                (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
+            ) {
+                _zap();
+            }
             _updateStandardWallet(from, to, value);
         }
 
         _revertIfStandardWalletAndOverMaxHolding(from);
         _revertIfStandardWalletAndOverMaxHolding(to);
-
-        //If theres enough tokens available, swap to LP
-        //Can also be done manually by admin
-        if (
-            to == ammCzusdPair && //sells only
-            from != address(tenXSettings.ammZapV1()) && //Prevent loops
-            to != address(tenXSettings.ammZapV1()) && //Prevent loops
-            balanceOf(address(this)) >=
-            (tenXSettings.swapLiquifyAtBps() * totalSupply()) / _BASIS
-        ) {
-            _zap();
-        }
     }
 
     function _updateStandardWallet(
@@ -373,7 +370,6 @@ contract TenXTokenV2 is
     ) internal view {
         if (
             wallet != ammCzusdPair &&
-            wallet != address(0) &&
             !isExempt[wallet] &&
             balanceOf(wallet) > balanceMax
         ) {
