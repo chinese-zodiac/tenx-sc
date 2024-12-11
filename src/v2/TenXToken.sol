@@ -341,14 +341,25 @@ contract TenXTokenV2 is
             taxWad += (value * buyTax) / _BASIS;
             burnWad += (value * buyBurn) / _BASIS;
             lpWad += (value * buyLpFee) / _BASIS;
+            
+            //buyer pays taxes after receiving tokens
+            super._update(from, to, value);
+            _sendTaxes(to, taxWad, burnWad, lpWad);
         }
         if (to == ammCzusdPair) {
             //sell taxes
             taxWad += (value * sellTax) / _BASIS;
             burnWad += (value * sellBurn) / _BASIS;
             lpWad += (value * sellLpFee) / _BASIS;
-        }
+            
+            //seller pays taxes before sending tokens
+            _sendTaxes(from, taxWad, burnWad, lpWad);
+            super._update(from, to, value - taxWad - burnWad - lpWad);
 
+        }
+    }
+
+    function _sendTaxes(address from, uint256 taxWad, uint256 burnWad, uint256 lpWad) internal {
         if (taxWad > 0) {
             super._update(from, taxReceiver, taxWad);
             totalTaxWad += taxWad;
@@ -362,7 +373,7 @@ contract TenXTokenV2 is
             totalLpWad += lpWad;
         }
         emit TaxesCollected(taxWad, burnWad, lpWad);
-        super._update(from, to, value - taxWad - burnWad - lpWad);
+
     }
 
     function _revertIfStandardWalletAndOverMaxHolding(

@@ -882,10 +882,37 @@ contract TestTenXTokenV2 is Test {
 
         token.transfer(address(token), 2 ether);
 
+        address[] memory path = new address[](2);
+        path[0] = address(token);
+        path[1] = address(czusd);
+
+        address trader1 = makeAddr("trader1");
+        token.transfer(trader1, 10 ether);
+
+        vm.startPrank(trader1);
+        token.approve(address(ammRouter), 10 ether);
+        ammRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            10 ether,
+            0.9 ether,
+            path,
+            trader1,
+            block.timestamp
+        );
+        vm.stopPrank();
+
+        assertLt(
+            10_010 ether,
+            token.balanceOf(token.ammCzusdPair())
+        );
         assertApproxEqRel(
-            10_002 ether,
+            10_011.325 ether,
             token.balanceOf(token.ammCzusdPair()),
-            0.0000001 ether
+            0.001 ether
+        );
+        assertApproxEqRel(
+            10 ether * 2_50 / 10_000,
+            token.balanceOf(address(token)),
+            0.000001 ether
         );
     }
 
