@@ -106,7 +106,7 @@ contract TenXLaunchV2 is AccessControlEnumerable {
         emit LaunchToken(token, launchedTokens.size() - 1, _czusdWad);
 
         token.grantRole(DEFAULT_ADMIN_ROLE, tenXSettings.governance());
-        token.grantRole(token.MANAGER_ROLE(), msg.sender);
+        token.grantRole(keccak256("MANAGER_ROLE"), msg.sender);
         token.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
     }
 

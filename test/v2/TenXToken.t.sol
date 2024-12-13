@@ -27,6 +27,8 @@ contract TestTenXTokenV2 is Test {
     TenXBlacklistV2 public tenXBlacklist;
     TenXTokenFactoryV2 public tenXTokenFactory;
 
+    bytes32 private constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+
     function setUp() public {
         governance = makeAddr("governance");
         weth = new WETH();
@@ -939,7 +941,7 @@ contract TestTenXTokenV2 is Test {
             2_50, //uint16 _sellLpFee,
             uint64(block.timestamp) //uint64 _launchTimestamp
         );
-        token.grantRole(token.MANAGER_ROLE(), manager);
+        token.grantRole(MANAGER_ROLE, manager);
 
         vm.startPrank(notAdmin);
         vm.expectRevert(
@@ -1026,7 +1028,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 notManager,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setDescriptionMarkdownCID("");
@@ -1034,7 +1036,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 notManager,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setIsExempt(address(0x0), false);
@@ -1042,7 +1044,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 notManager,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setMaxes(0, 0);
@@ -1050,7 +1052,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 notManager,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setTaxes(0, 0, 0, 0, 0, 0);
@@ -1058,7 +1060,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 notManager,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setTaxReceiver(address(0x0));
@@ -1066,7 +1068,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 notManager,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setTokenLogoCID("");
@@ -1077,7 +1079,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 admin,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setDescriptionMarkdownCID("");
@@ -1085,7 +1087,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 admin,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setIsExempt(address(0x0), false);
@@ -1093,7 +1095,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 admin,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setMaxes(0, 0);
@@ -1101,7 +1103,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 admin,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setTaxes(0, 0, 0, 0, 0, 0);
@@ -1109,7 +1111,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 admin,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setTaxReceiver(address(0x0));
@@ -1117,7 +1119,7 @@ contract TestTenXTokenV2 is Test {
             abi.encodeWithSelector(
                 IAccessControl.AccessControlUnauthorizedAccount.selector,
                 admin,
-                token.MANAGER_ROLE()
+                MANAGER_ROLE
             )
         );
         token.MANAGER_setTokenLogoCID("");

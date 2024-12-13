@@ -29,6 +29,8 @@ contract TestTenXLaunchV2 is Test {
     TenXTokenFactoryV2 public tenXTokenFactory;
     TenXLaunchV2 public tenXLaunch;
 
+    bytes32 private constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+
     function setUp() public {
         governance = makeAddr("governance");
         weth = new WETH();
@@ -122,11 +124,11 @@ contract TestTenXLaunchV2 is Test {
         assertFalse(token.hasRole(token.DEFAULT_ADMIN_ROLE(), taxReceiver));
         assertFalse(token.hasRole(token.DEFAULT_ADMIN_ROLE(), address(this)));
 
-        assertTrue(token.hasRole(token.MANAGER_ROLE(), address(this)));
-        assertFalse(token.hasRole(token.MANAGER_ROLE(), address(tenXLaunch)));
+        assertTrue(token.hasRole(MANAGER_ROLE, address(this)));
+        assertFalse(token.hasRole(MANAGER_ROLE, address(tenXLaunch)));
 
         assertEq(token.getRoleMemberCount(token.DEFAULT_ADMIN_ROLE()), 1);
-        assertEq(token.getRoleMemberCount(token.MANAGER_ROLE()), 1);
+        assertEq(token.getRoleMemberCount(MANAGER_ROLE), 1);
 
         assertEq(tenXLaunch.czusdGrant(address(token)), 5_000 ether);
     }

@@ -23,7 +23,7 @@ contract TenXTokenV2 is
     //Upload to IPFS as .md file.
     string public descriptionMarkdownCID;
 
-    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+    bytes32 private constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
     uint256 public immutable INITIAL_SUPPLY;
 
@@ -124,7 +124,6 @@ contract TenXTokenV2 is
         _revertIfTaxTooHigh();
         _revertIfBalanceMaxOutOfRange();
         _revertIfTransactionSizeMaxOutOfRange();
-        tenXSettings.blacklist().revertIfAccountBlacklisted(taxReceiver);
         uint64 maxLaunchTimestamp = uint64(block.timestamp) +
             tenXSettings.launchTimestampCap();
         if (launchTimestamp > maxLaunchTimestamp) {
@@ -289,7 +288,6 @@ contract TenXTokenV2 is
         uint256 value
     ) internal override {
         TenXBlacklistV2 blacklist = tenXSettings.blacklist();
-        blacklist.revertIfAccountBlacklisted(address(this));
         blacklist.revertIfAccountBlacklisted(from);
         blacklist.revertIfAccountBlacklisted(to);
         if (
@@ -333,29 +331,24 @@ contract TenXTokenV2 is
             revert BeforeCountdown(uint64(block.timestamp), launchTimestamp);
         }
         //Tax and burn for buys, sells
-        uint256 taxWad;
-        uint256 burnWad;
-        uint256 lpWad;
         if (from == ammCzusdPair) {
             //buy taxes
-            taxWad += (value * buyTax) / _BASIS;
-            burnWad += (value * buyBurn) / _BASIS;
-            lpWad += (value * buyLpFee) / _BASIS;
+            uint256 taxWad = (value * buyTax) / _BASIS;
+            uint256 burnWad = (value * buyBurn) / _BASIS;
+            uint256 lpWad = (value * buyLpFee) / _BASIS;
             
             //buyer pays taxes after receiving tokens
             super._update(from, to, value);
             _sendTaxes(to, taxWad, burnWad, lpWad);
-        }
-        if (to == ammCzusdPair) {
+        }else if (to == ammCzusdPair) {
             //sell taxes
-            taxWad += (value * sellTax) / _BASIS;
-            burnWad += (value * sellBurn) / _BASIS;
-            lpWad += (value * sellLpFee) / _BASIS;
+            uint256 taxWad = (value * sellTax) / _BASIS;
+            uint256 burnWad = (value * sellBurn) / _BASIS;
+            uint256 lpWad = (value * sellLpFee) / _BASIS;
             
             //seller pays taxes before sending tokens
             _sendTaxes(from, taxWad, burnWad, lpWad);
             super._update(from, to, value - taxWad - burnWad - lpWad);
-
         }
     }
 
@@ -373,7 +366,6 @@ contract TenXTokenV2 is
             totalLpWad += lpWad;
         }
         emit TaxesCollected(taxWad, burnWad, lpWad);
-
     }
 
     function _revertIfStandardWalletAndOverMaxHolding(

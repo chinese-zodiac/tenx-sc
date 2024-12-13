@@ -67,6 +67,10 @@ contract DeployTenXLaunch is Script {
         TenXLaunchV2 tenXLaunch = new TenXLaunchV2(settings);
         new TenXLaunchViewV2(tenXLaunch);
 
+        //roles
+        blacklist.grantRole(blacklist.DEFAULT_ADMIN_ROLE(), governance);
+        blacklist.revokeRole(blacklist.DEFAULT_ADMIN_ROLE(), address(this));
+
         //POST: Request governance to grant czusd MINTER_ROLE to tenXLaunch
 
         vm.stopBroadcast();

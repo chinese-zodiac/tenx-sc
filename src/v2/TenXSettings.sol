@@ -67,7 +67,7 @@ contract TenXSettingsV2 is AccessControlEnumerable {
         ammFactory = _ammFactory;
         ammZapV1 = _ammZapV1;
 
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, _governance);
         emit SetCzusdGrantCap(czusdGrantCap);
         emit SetCzusdGrantFlor(czusdGrantFloor);
         emit SetLaunchTimestampCap(launchTimestampCap);
