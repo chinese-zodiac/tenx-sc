@@ -18,6 +18,17 @@ Network: BSC Testnet
 | AmmZapV1                          | 0x4DF8F9bE759c54BeBA853056a9278c6118892652 |
 | IterableArrayWithoutDuplicateKeys | 0x606E3cBB3fb84Ed08c31Cce44aB9A200F54A5630 |
 
+Network: BSC Mainnet
+
+| Contract                          | Address                                    |
+| --------------------------------- | ------------------------------------------ |
+| TenXLaunchViewV2                  | 0x6471fA3861ef68Eb3393f80aCBa4645E75148F1A |
+| TenXLaunchV2                      | 0x6F4Efc75E44531eC11b87B86D9708F55cE76239A |
+| TenXSettingsV2                    | 0xA78b790470DB20193341E5f471674bF6D51D6B6b |
+| TenXTokenFactoryV2                | 0xf8498d0018918016372F2E945B7A33c0d052F5Fd |
+| TenXBlacklistV2                   | 0x8f482320dCEeC430879f881B0239303102358432 |
+| IterableArrayWithoutDuplicateKeys | 0x606E3cBB3fb84Ed08c31Cce44aB9A200F54A5630 |
+
 ### v1
 
 TenXLaunch
