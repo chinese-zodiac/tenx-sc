@@ -16,7 +16,7 @@ contract DeployTenXLaunch is Script {
     function run() public {
         vm.startBroadcast();
 
-        ///*
+        /*
         //BSC TESTNET
         address governance = address(
             0xfcD9F2d36f7315d2785BA19ca920B14116EA3451
@@ -32,15 +32,15 @@ contract DeployTenXLaunch is Script {
             address(0x2af880f34F479506Fa8001F13c4c0d7e126A290B)
         );
 
-        //*/
+        */
 
-        /*
+        ///*
         //BSC MAINNET
         address governance = address(
             0x745A676C5c472b50B50e18D4b59e9AeEEc597046
         );
         AmmZapV1 zap = AmmZapV1(
-            address(0xD4c4a7C55c9f7B3c48bafb6E8643Ba79F42418dF)
+            payable(0xD4c4a7C55c9f7B3c48bafb6E8643Ba79F42418dF)
         );
         IAmmRouter02 router = IAmmRouter02(
             address(0x10ED43C718714eb63d5aA57B78B54704E256024E)
@@ -51,7 +51,7 @@ contract DeployTenXLaunch is Script {
         IERC20Mintable czusd = IERC20Mintable(
             address(0xE68b79e51bf826534Ff37AA9CeE71a3842ee9c70)
         );
-        */
+        //*/
 
         TenXBlacklistV2 blacklist = new TenXBlacklistV2();
         TenXTokenFactoryV2 tokenFactory = new TenXTokenFactoryV2();
